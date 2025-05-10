@@ -9,7 +9,7 @@
     <ParticipantsList
       :team-id="selectedTeamId"
       :participants="participants"
-      @update:participants="setParticipants"
+      :set-participants="setParticipants"
       @participant-added="refetchTeam"
     />
 

@@ -1,24 +1,40 @@
 <template>
-  <div class="tea-wheel">
-    <h2>Tea Wheel</h2>
-    <div class="wheel-container">
-      <div
-        v-if="participants.length"
-        class="wheel"
-        :class="{ spinning: isSpinning }"
-        @click="spinWheel"
-      >
-        <div
-          v-for="(participant, index) in participants"
-          :key="participant.id"
-          class="wheel-segment"
-          :style="getSegmentStyle(index)"
-        >
-          {{ participant.name }}
-        </div>
+  <div class="tea-wheel-container">
+    <button 
+      @click="startSpinning" 
+      :disabled="mustStartSpinning || participants.length === 0"
+      class="spin-button"
+    >
+      {{ isSpinning ? 'Spinning...' : 'Spin the Wheel' }}
+    </button>
+
+    <!-- Wheel Modal -->
+    <div v-if="isSpinning" class="modal-overlay">
+      <div class="wheel-modal">
+        <Roulette
+          v-if="participants.length > 0"
+          :items="wheelData"
+          :wheel-result-index="prizeNumber"
+          :first-item-index="0"
+          :size="400"
+          :centered-indicator="true"
+          :indicator-position="'top'"
+          :display-shadow="true"
+          :duration="4"
+          :easing="'ease'"
+          :display-border="true"
+          :display-indicator="true"
+          @wheel-end="onStopSpinning"
+        />
       </div>
-      <div v-else class="no-participants">
-        Add participants to spin the wheel
+    </div>
+
+    <!-- Winner Modal -->
+    <div v-if="showWinnerModal" class="modal-overlay">
+      <div class="modal-content">
+        <h2>Tea Round Winner!</h2>
+        <p>{{ selectedParticipant }} has been selected to make the tea!</p>
+        <button @click="closeModal" class="modal-button">Spin Again</button>
       </div>
     </div>
   </div>
@@ -26,81 +42,152 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { Participant } from '../../types/Types'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import { Roulette } from 'vue3-roulette'
+
+const router = useRouter()
+const toast = useToast()
 
 const props = defineProps<{
-  teamId: number | null
-  participants: Participant[]
+  participants: string[]
 }>()
 
-const emit = defineEmits<{
-  (e: 'tea-maker-picked'): void
-}>()
-
+const mustStartSpinning = ref(false)
+const prizeNumber = ref(0)
+const showWinnerModal = ref(false)
+const selectedParticipant = ref('')
 const isSpinning = ref(false)
 
-const getSegmentStyle = (index: number) => {
-  const totalParticipants = props.participants.length
-  const rotation = (360 / totalParticipants) * index
-  return {
-    transform: `rotate(${rotation}deg) translate(50%)`
+const wheelData = computed(() => {
+  return props.participants
+})
+
+const startSpinning = () => {
+  if (props.participants.length === 0) {
+    toast.error('Please add participants first')
+    return
   }
+  isSpinning.value = true
+  mustStartSpinning.value = true
+  prizeNumber.value = Math.floor(Math.random() * props.participants.length)
 }
 
-const spinWheel = () => {
-  if (isSpinning.value || !props.participants.length) return
+const onStopSpinning = () => {
+  mustStartSpinning.value = false
+  isSpinning.value = false
+  selectedParticipant.value = props.participants[prizeNumber.value]
+  showWinnerModal.value = true
+  toast.success(`${selectedParticipant.value} has been selected!`)
+}
 
-  isSpinning.value = true
-  setTimeout(() => {
-    isSpinning.value = false
-    emit('tea-maker-picked')
-  }, 3000)
+const closeModal = () => {
+  showWinnerModal.value = false
+}
+
+const goToParticipants = () => {
+  router.push('/participants')
 }
 </script>
 
 <style scoped>
-.tea-wheel {
+.tea-wheel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.spin-button {
+  background: #FF8B26;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 25px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(255, 139, 38, 0.3);
+}
+
+.spin-button:hover:not(:disabled) {
+  background: #FF7B16;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 139, 38, 0.4);
+}
+
+.spin-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.wheel-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 90%;
+  width: 400px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-content h2 {
+  color: #FF8B26;
   margin-bottom: 1rem;
 }
 
-.wheel-container {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
-}
-
-.wheel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid #333;
+.modal-button {
+  background: #FF8B26;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+  transition: all 0.3s ease;
+  margin-top: 1rem;
 }
 
-.wheel.spinning {
-  transform: rotate(1800deg);
+.modal-button:hover {
+  background: #FF7B16;
+  transform: translateY(-2px);
 }
 
-.wheel-segment {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  transform-origin: 100% 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  text-align: center;
-  padding: 0.5rem;
-}
-
-.no-participants {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-  padding: 1rem;
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 </style> 
