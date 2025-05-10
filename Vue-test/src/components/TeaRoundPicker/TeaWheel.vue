@@ -47,11 +47,7 @@ import { useToast } from 'vue-toastification'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import { api } from '@/services/api'
-
-interface Participant {
-  id: number
-  name: string
-}
+import type { Participant } from '../../types/Types'
 
 const router = useRouter()
 const toast = useToast()
