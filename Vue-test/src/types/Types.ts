@@ -5,7 +5,14 @@ export interface Participant {
 }
 
 export interface Team {
-  id: number;
-  name: string;
+  id?: number;
+  label: string;
   participants?: Participant[];
+}
+
+export interface TeaRound {
+  id: number;
+  teamId: number;
+  date: string;
+  participants: Participant[];
 } 

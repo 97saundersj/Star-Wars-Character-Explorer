@@ -31,6 +31,10 @@ import { ref } from 'vue'
 import type { Team, Participant } from '../types/Types'
 import { api } from '../services/api'
 import { useToast } from 'vue-toastification'
+import TeamSelector from './TeaRoundPicker/TeamSelector.vue'
+import ParticipantsList from './TeaRoundPicker/ParticipantsList.vue'
+import TeaWheel from './TeaRoundPicker/TeaWheel.vue'
+import TeaRoundsTable from './TeaRoundPicker/TeaRoundsTable.vue'
 
 const toast = useToast()
 
@@ -40,9 +44,12 @@ const refetchPreviousSelections = ref<boolean>(false)
 
 const fetchTeamById = async (teamId: number): Promise<void> => {
   try {
+    console.log('Fetching team details for ID:', teamId)
     const response = await api.getTeamById(teamId)
+    console.log('Team details response:', response)
     participants.value = response.participants || []
     if (response.id) {
+      console.log('Setting selectedTeamId to:', response.id)
       selectedTeamId.value = response.id
     }
   } catch (error) {
@@ -52,9 +59,12 @@ const fetchTeamById = async (teamId: number): Promise<void> => {
 }
 
 const handleTeamSelect = (team: Team | null): void => {
+  console.log('Team selected:', team)
   if (team?.id) {
+    console.log('Fetching team with ID:', team.id)
     fetchTeamById(team.id)
   } else {
+    console.log('No team selected, clearing state')
     participants.value = []
     selectedTeamId.value = null
   }
