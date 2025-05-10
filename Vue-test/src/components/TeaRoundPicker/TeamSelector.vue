@@ -1,66 +1,43 @@
 <template>
-  <div class="team-selector card m-2" data-testid="team-selector">
+  <div class="team-selector card m-2 bg-dark text-light" data-testid="team-selector">
     <div class="card-body">
       <h5 class="card-title">Team</h5>
       <Multiselect
         v-model="selectedTeam"
         :options="teams"
-        option-label="name"
+        option-label="label"
         track-by="value"
         :searchable="true"
-        :multiple="false"
-        :close-on-select="true"
-        :clear-on-select="false"
-        :preserve-search="true"
         placeholder="Select a team..."
         data-testid="team-selector-input"
         @search-change="handleSearch"
         @open="fetchTeams"
         @change="handleTeamChange"
+        class="form-control bg-dark text-light"
       />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
-import type { Team } from '@/types/Types'
+import { ref, onMounted } from 'vue'
 import { api } from '@/services/api'
 import { useToast } from 'vue-toastification'
 import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
 
-interface TeamOption {
-  name: string;
-  value: number;
-}
-
 const toast = useToast()
+const teams = ref<{ label: string; value: number }[]>([])
+const selectedTeam = ref<{ name: string; value: number } | null>(null)
 
-const emit = defineEmits<{
-  (e: 'team-select', team: Team | null): void
-}>()
-
-const teams = ref<TeamOption[]>([])
-const selectedTeam = ref<TeamOption | null>(null)
-
-const fetchTeams = async (): Promise<void> => {
+const fetchTeams = async () => {
   try {
     const response = await api.getTeams()
-    console.log('Fetched teams:', JSON.stringify(response, null, 2))
-    teams.value = response.map(team => {
-      const mapped = {
-        name: team.label,
-        value: team.id ?? 0,
-        label: team.label,
-        id: team.id,
-        participants: team.participants
-      }
-      console.log('Mapped team:', JSON.stringify(mapped, null, 2))
-      return mapped
-    })
+    teams.value = response.map(team => ({
+      label: team.label,
+      value: team.id ?? 0
+    }))
   } catch (error) {
-    console.error('Error fetching teams:', error)
     toast.error('Failed to fetch teams. Please try again.')
   }
 }
@@ -76,81 +53,52 @@ const handleCreate = async (newValue: string) => {
     return
   }
 
-  const newTeam: Omit<Team, 'id'> = { label: newValue, participants: [] }
   try {
-    console.log('Creating team:', newTeam)
-    const created = await api.createTeam(newTeam as Team)
-    console.log('Created team response:', created)
-    if (!created.id) throw new Error('No ID on created team')
-
+    const created = await api.createTeam({ label: newValue, participants: [] })
     await fetchTeams()
-    const justCreated = teams.value.find(t => t.value === created.id)
-    console.log('Found created team in list:', justCreated)
-    selectedTeam.value = justCreated ?? { name: created.label, value: created.id, ...created }
+    const createdTeam = { name: created.label, value: created.id ?? 0 }
+    teams.value.push(createdTeam)
+    selectedTeam.value = createdTeam
   } catch (error) {
-    console.error('Error creating team:', error)
     toast.error('Error creating team. Please try again.')
   }
 }
 
 const handleSearch = (search: string) => {
-  if (
-    search &&
-    !teams.value.some(t => t.name.toLowerCase() === search.toLowerCase())
-  ) {
+  if (search && !teams.value.some(t => t.name.toLowerCase() === search.toLowerCase())) {
     handleCreate(search)
   }
 }
 
-const handleTeamChange = (teamId: number) => {
-  console.log('Selected team:', JSON.stringify(teamId, null, 2))
-  if (teamId) {
-    const originalTeam: Team = {
-      id: teamId,
-      label: "",
-      //participants: team.participants
-    }
-    console.log('Emitting team:', JSON.stringify(originalTeam, null, 2))
-    emit('team-select', originalTeam)
-  } else {
-    console.log('Emitting null team')
-    emit('team-select', null)
-  }
+const emit = defineEmits<{
+  (e: 'team-select', team: { id: number; label: string } | null): void
+}>()
+
+const handleTeamChange = (teamId: number | null) => {
+  emit('team-select', teamId ? { id: teamId, label: "" } : null)
 }
 
 onMounted(fetchTeams)
 </script>
 
 <style scoped>
-.team-selector {
-  margin-bottom: 1rem;
-}
-.card {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-.card-body {
-  padding: 1rem;
-}
-.card-title {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
+/* Custom styles for dark theme using :deep */
 :deep(.multiselect) {
-  min-height: 40px;
+  background-color: #343a40; /* Dark background */
+  color: #ffffff; /* Light text */
 }
+
 :deep(.multiselect-dropdown) {
-  border: 1px solid #ced4da;
-  border-radius: 4px;
+  background-color: #343a40; /* Dark dropdown background */
+  color: #ffffff; /* Light dropdown text */
 }
+
 :deep(.multiselect-option) {
-  padding: 0.5rem;
+  color: #ffffff; /* Light text for options */
 }
+
 :deep(.multiselect-search) {
-  padding: 0.5rem;
-}
-:deep(.multiselect-single-label) {
-  padding: 0.5rem;
+  background-color: #495057; /* Darker background for search input */
+  color: #ffffff; /* Light text for search input */
 }
 </style>
