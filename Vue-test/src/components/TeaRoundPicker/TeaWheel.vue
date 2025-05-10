@@ -1,193 +1,150 @@
 <template>
-  <div class="tea-wheel-container">
-    <button 
-      @click="startSpinning" 
-      :disabled="mustStartSpinning || participants.length === 0"
-      class="spin-button"
-    >
-      {{ isSpinning ? 'Spinning...' : 'Spin the Wheel' }}
-    </button>
-
-    <!-- Wheel Modal -->
-    <div v-if="isSpinning" class="modal-overlay">
-      <div class="wheel-modal">
-        <Roulette
-          v-if="participants.length > 0"
-          :items="wheelData"
-          :wheel-result-index="prizeNumber"
-          :first-item-index="0"
-          :size="400"
-          :centered-indicator="true"
-          :indicator-position="'top'"
-          :display-shadow="true"
-          :duration="4"
-          :easing="'ease'"
-          :display-border="true"
-          :display-indicator="true"
-          @wheel-end="onStopSpinning"
-        />
-      </div>
+  <div class="card m-2">
+    <div class="card-body">
+      <h5 class="card-title">Pick Tea Maker</h5>
+      <button
+        class="btn btn-success btn-lg w-100 mb-3"
+        @click="pickTeaMaker"
+        :disabled="isSpinning || !participants || participants.length === 0 || !teamId"
+      >
+        Pick Tea Maker
+      </button>
     </div>
 
     <!-- Winner Modal -->
-    <div v-if="showWinnerModal" class="modal-overlay">
-      <div class="modal-content">
-        <h2>Tea Round Winner!</h2>
-        <p>{{ selectedParticipant }} has been selected to make the tea!</p>
-        <button @click="closeModal" class="modal-button">Spin Again</button>
+    <div class="modal fade" :class="{ show: modalVisible }" tabindex="-1" :style="{ display: modalVisible ? 'block' : 'none' }">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tea Maker Selected</h5>
+            <button type="button" class="btn-close" @click="handleClose"></button>
+          </div>
+          <div class="modal-body text-center">
+            <div v-if="selectedParticipant" class="alert alert-success text-center mt-3">
+              🎉 {{ selectedParticipant.name }} will make the tea! 🎉
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button 
+              v-if="selectedParticipant" 
+              class="btn btn-primary" 
+              @click="pickTeaMaker"
+            >
+              Pick Again?
+            </button>
+          </div>
+        </div>
       </div>
     </div>
+    <div v-if="modalVisible" class="modal-backdrop fade show"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
-import { Roulette } from 'vue3-roulette'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import { api } from '@/services/api'
+
+interface Participant {
+  id: number
+  name: string
+}
 
 const router = useRouter()
 const toast = useToast()
 
 const props = defineProps<{
-  participants: string[]
+  participants: Participant[]
+  teamId: number | null
 }>()
 
-const mustStartSpinning = ref(false)
-const prizeNumber = ref(0)
-const showWinnerModal = ref(false)
-const selectedParticipant = ref('')
+const emit = defineEmits<{
+  (e: 'pickedTeaMaker'): void
+}>()
+
 const isSpinning = ref(false)
+const modalVisible = ref(false)
+const selectedParticipant = ref<Participant | null>(null)
 
-const wheelData = computed(() => {
-  return props.participants
-})
-
-const startSpinning = () => {
-  if (props.participants.length === 0) {
+const pickTeaMaker = async () => {
+  if (!props.teamId || props.participants.length === 0) {
     toast.error('Please add participants first')
     return
   }
-  isSpinning.value = true
-  mustStartSpinning.value = true
-  prizeNumber.value = Math.floor(Math.random() * props.participants.length)
+
+  try {
+    isSpinning.value = true
+    console.log('Adding tea round for team:', props.teamId)
+    const participantId = await api.addTeaRound(props.teamId)
+    console.log('Tea round added, selected participant:', participantId)
+    
+    const selected = props.participants.find(p => p.id === participantId)
+    if (!selected) throw new Error('Selected participant not found')
+
+    selectedParticipant.value = selected
+    console.log('Emitting pickedTeaMaker event')
+    emit('pickedTeaMaker')
+    modalVisible.value = true
+    isSpinning.value = false
+  } catch (error) {
+    console.error("Error picking tea maker:", error)
+    toast.error("Error picking tea maker. Please try again.")
+    isSpinning.value = false
+  }
 }
 
-const onStopSpinning = () => {
-  mustStartSpinning.value = false
+const handleClose = () => {
   isSpinning.value = false
-  selectedParticipant.value = props.participants[prizeNumber.value]
-  showWinnerModal.value = true
-  toast.success(`${selectedParticipant.value} has been selected!`)
-}
-
-const closeModal = () => {
-  showWinnerModal.value = false
-}
-
-const goToParticipants = () => {
-  router.push('/participants')
+  modalVisible.value = false
 }
 </script>
 
 <style scoped>
-.tea-wheel-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-}
-
-.spin-button {
-  background: #FF8B26;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 25px;
-  font-size: 1.2rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(255, 139, 38, 0.3);
-}
-
-.spin-button:hover:not(:disabled) {
-  background: #FF7B16;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 139, 38, 0.4);
-}
-
-.spin-button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.modal-overlay {
+.modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
 }
 
-.wheel-modal {
-  background: white;
-  padding: 2rem;
-  border-radius: 20px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: modalFadeIn 0.3s ease-out;
+.modal {
+  z-index: 1050;
+}
+
+.modal.show {
+  display: block;
 }
 
 .modal-content {
   background: white;
-  padding: 2rem;
   border-radius: 15px;
-  text-align: center;
-  max-width: 90%;
-  width: 400px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  animation: modalFadeIn 0.3s ease-out;
 }
 
-.modal-content h2 {
-  color: #FF8B26;
-  margin-bottom: 1rem;
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
 }
 
-.modal-button {
-  background: #FF8B26;
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 25px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 1rem;
+.btn-success:hover:not(:disabled) {
+  background-color: #218838;
+  border-color: #1e7e34;
 }
 
-.modal-button:hover {
-  background: #FF7B16;
-  transform: translateY(-2px);
+.btn-success:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
 }
 
-@keyframes modalFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
 }
 </style> 

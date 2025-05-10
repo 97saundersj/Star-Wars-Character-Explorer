@@ -1,8 +1,14 @@
 <template>
-  <div v-if="teamId && teaRounds.length && !error" class="card bg-dark text-light m-2">
+  <div v-if="teamId" class="card bg-dark text-light m-2">
     <div class="card-body">
       <h5 class="card-title mb-4">Previous Tea Rounds</h5>
-      <div class="accordion" id="teaRoundAccordion">
+      <div v-if="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+      <div v-else-if="!teaRounds.length" class="text-center text-muted">
+        No tea rounds yet
+      </div>
+      <div v-else class="accordion" id="teaRoundAccordion">
         <div
           v-for="(round, index) in teaRounds"
           :key="round.id"
@@ -56,13 +62,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, watchEffect } from 'vue'
 import type { TeaRound } from '../../types/Types'
 import { api } from '../../services/api'
 
 const props = defineProps<{
   teamId: number | null
-  refresh: boolean
+  refresh: number
 }>()
 
 const teaRounds = ref<TeaRound[]>([])
@@ -72,33 +78,29 @@ const fetchTeaRounds = async (): Promise<void> => {
   if (!props.teamId) return
   
   try {
+    console.log('Fetching tea rounds for team:', props.teamId)
     const response = await api.getTeaRounds(props.teamId)
+    console.log('Received tea rounds:', response)
     teaRounds.value = response
     error.value = null
   } catch (err) {
+    console.error('Error fetching tea rounds:', err)
     error.value = 'Error fetching previous selections.'
     teaRounds.value = []
   }
 }
 
-// Watch for changes in refresh prop to refetch data
-watch(() => props.refresh, () => {
+// Use watchEffect with post flush
+watchEffect(() => {
+  console.log('watchEffect triggered:', { teamId: props.teamId, refresh: props.refresh })
   if (props.teamId) {
     fetchTeaRounds()
   }
-})
-
-// Watch for changes in teamId to fetch data
-watch(() => props.teamId, (newTeamId) => {
-  if (newTeamId) {
-    fetchTeaRounds()
-  } else {
-    teaRounds.value = []
-  }
-})
+}, { flush: 'post' })
 
 // Initial fetch when component is mounted
 onMounted(() => {
+  console.log('Component mounted, teamId:', props.teamId)
   if (props.teamId) {
     fetchTeaRounds()
   }
@@ -110,6 +112,10 @@ const formatDateTime = (date: string): string => {
     timeStyle: 'short'
   }).format(new Date(date))
 }
+
+defineExpose({
+  fetchTeaRounds
+})
 </script>
 
 <style scoped>
