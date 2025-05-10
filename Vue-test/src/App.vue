@@ -1,85 +1,37 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { BNavbar, BNavbarBrand, BNavbarNav, BNavItem, BContainer } from 'bootstrap-vue-next'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="min-vh-100 d-flex flex-column bg-dark text-light">
+    <BNavbar toggleable="lg" type="dark" variant="dark" fixed="top" class="shadow-sm">
+      <BContainer class="d-flex align-items-center">
+        <BNavbarBrand to="/" class="d-flex align-items-center">
+          <img alt="Vue logo" src="@/assets/logo.svg" width="30" height="30" class="me-2" />
+          Vue App
+        </BNavbarBrand>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+        <BNavbarNav class="ms-4">
+          <BNavItem to="/" exact>Home</BNavItem>
+          <BNavItem to="/about">About</BNavItem>
+          <BNavItem to="/tea-rounds">Tea</BNavItem>
+        </BNavbarNav>
+      </BContainer>
+    </BNavbar>
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div class="mt-5 pt-4 flex-grow-1 bg-dark">
+      <BContainer class="bg-dark">
+        <RouterView />
+      </BContainer>
     </div>
-  </header>
-
-  <RouterView />
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+:deep(.router-link-active) {
+  color: #42b983 !important;
 }
 </style>
