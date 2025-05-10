@@ -1,37 +1,52 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import { BNavbar, BNavbarBrand, BNavbarNav, BNavItem, BContainer } from 'bootstrap-vue-next'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import 'bootstrap-vue-next/dist/bootstrap-vue-next.css'
 </script>
 
 <template>
   <div class="min-vh-100 d-flex flex-column bg-dark text-light">
-    <BNavbar toggleable="lg" type="dark" variant="dark" fixed="top" class="shadow-sm">
-      <BContainer class="d-flex align-items-center">
-        <BNavbarBrand to="/" class="d-flex align-items-center">
-          <img alt="Vue logo" src="@/assets/logo.svg" width="30" height="30" class="me-2" />
-          Vue App
-        </BNavbarBrand>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
+      <div class="container">
+        <RouterLink class="navbar-brand fw-bold" to="/">
+          <i class="bi bi-cup-hot me-2"></i>Tea Round Picker
+        </RouterLink>
+        <button 
+          class="navbar-toggler" 
+          type="button" 
+          data-bs-toggle="collapse" 
+          data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <RouterLink class="nav-link px-3" to="/">
+                <i class="bi bi-house-door me-1"></i>Home
+              </RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link px-3" to="/tea-rounds">
+                <i class="bi bi-cup-hot me-1"></i>Tea Round
+              </RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink class="nav-link px-3" to="/about">
+                <i class="bi bi-info-circle me-1"></i>About
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
 
-        <BNavbarNav class="ms-4">
-          <BNavItem to="/" exact>Home</BNavItem>
-          <BNavItem to="/about">About</BNavItem>
-          <BNavItem to="/tea-rounds">Tea</BNavItem>
-        </BNavbarNav>
-      </BContainer>
-    </BNavbar>
-
-    <div class="mt-5 pt-4 flex-grow-1 bg-dark">
-      <BContainer class="bg-dark">
+    <main class="flex-grow-1 py-4">
+      <div class="container">
         <RouterView />
-      </BContainer>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
-
-<style scoped>
-:deep(.router-link-active) {
-  color: #42b983 !important;
-}
-</style>

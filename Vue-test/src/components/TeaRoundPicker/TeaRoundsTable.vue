@@ -1,114 +1,125 @@
 <template>
-  <div class="tea-rounds-table">
-    <h2>Previous Tea Rounds</h2>
-    <table v-if="teaRounds.length" class="table">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Tea Maker</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="round in teaRounds"
+  <div v-if="teamId" class="card bg-dark text-light m-2">
+    <div class="card-body">
+      <h5 class="card-title mb-4">Previous Tea Rounds</h5>
+      <div v-if="error" class="alert alert-danger">
+        {{ error }}
+      </div>
+      <div v-else-if="!teaRounds.length" class="text-center text-muted">
+        No tea rounds yet
+      </div>
+      <div v-else class="accordion" id="teaRoundAccordion">
+        <div
+          v-for="(round, index) in teaRounds"
           :key="round.id"
+          class="accordion-item bg-dark text-light"
         >
-          <td>{{ formatDate(round.date) }}</td>
-          <td>{{ round.teaMaker }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-else class="no-rounds">
-      No previous tea rounds recorded
+          <h2 class="accordion-header" :id="`heading${index}`">
+            <button
+              class="accordion-button collapsed bg-dark text-light"
+              type="button"
+              data-bs-toggle="collapse"
+              :data-bs-target="`#collapse${index}`"
+              aria-expanded="false"
+              :aria-controls="`collapse${index}`"
+            >
+              <b>
+                {{ formatDateTime(round.date) }} - {{ round.chosenParticipant.name }} made tea
+              </b>
+            </button>
+          </h2>
+          <div
+            :id="`collapse${index}`"
+            class="accordion-collapse collapse bg-dark"
+            :aria-labelledby="`heading${index}`"
+          >
+            <div class="accordion-body">
+              <table class="table table-dark table-hover">
+                <thead>
+                  <tr>
+                    <th>Participant</th>
+                    <th>Tea Order</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="order in round.teaOrders" :key="order.id">
+                    <td>{{ order.participant.name }}</td>
+                    <td>
+                      <template v-if="order.requestedTeaOrder">
+                        {{ order.requestedTeaOrder }}
+                      </template>
+                      <small v-else class="text-muted fst-italic">None Specified</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import type { Team, Participant } from '../../types/Types'
-
-interface TeaRound {
-  id: number
-  date: Date
-  teaMaker: string
-}
+import { ref, watch, onMounted, watchEffect } from 'vue'
+import type { TeaRound } from '../../types/Types'
+import { api } from '../../services/api'
 
 const props = defineProps<{
   teamId: number | null
-  refresh: boolean
+  refresh: number
 }>()
 
 const teaRounds = ref<TeaRound[]>([])
+const error = ref<string | null>(null)
 
-// Watch for changes in refresh prop to refetch data
-watch(() => props.refresh, () => {
+const fetchTeaRounds = async (): Promise<void> => {
+  if (!props.teamId) return
+  
+  try {
+    console.log('Fetching tea rounds for team:', props.teamId)
+    const response = await api.getTeaRounds(props.teamId)
+    console.log('Received tea rounds:', response)
+    teaRounds.value = response
+    error.value = null
+  } catch (err) {
+    console.error('Error fetching tea rounds:', err)
+    error.value = 'Error fetching previous selections.'
+    teaRounds.value = []
+  }
+}
+
+// Use watchEffect with post flush
+watchEffect(() => {
+  console.log('watchEffect triggered:', { teamId: props.teamId, refresh: props.refresh })
+  if (props.teamId) {
+    fetchTeaRounds()
+  }
+}, { flush: 'post' })
+
+// Initial fetch when component is mounted
+onMounted(() => {
+  console.log('Component mounted, teamId:', props.teamId)
   if (props.teamId) {
     fetchTeaRounds()
   }
 })
 
-// Watch for changes in teamId to fetch data
-watch(() => props.teamId, (newTeamId) => {
-  if (newTeamId) {
-    fetchTeaRounds()
-  } else {
-    teaRounds.value = []
-  }
+const formatDateTime = (date: string): string => {
+  return new Intl.DateTimeFormat('en-UK', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(new Date(date))
+}
+
+defineExpose({
+  fetchTeaRounds
 })
-
-const fetchTeaRounds = async (): Promise<void> => {
-  // TODO: Implement actual API call
-  // This is placeholder data
-  teaRounds.value = [
-    {
-      id: 1,
-      date: new Date('2024-03-15'),
-      teaMaker: 'John Doe'
-    },
-    {
-      id: 2,
-      date: new Date('2024-03-14'),
-      teaMaker: 'Jane Smith'
-    }
-  ]
-}
-
-const formatDate = (date: Date): string => {
-  return new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric'
-  }).format(date)
-}
 </script>
 
 <style scoped>
-.tea-rounds-table {
-  margin-bottom: 1rem;
-}
-
-.table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 1rem;
-}
-
-.table th,
-.table td {
-  padding: 0.5rem;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.table th {
-  font-weight: bold;
-  background-color: #f5f5f5;
-}
-
-.no-rounds {
-  color: #666;
-  font-style: italic;
-  padding: 1rem;
+.accordion-button::after {
+  filter: invert(1);
 }
 </style> 

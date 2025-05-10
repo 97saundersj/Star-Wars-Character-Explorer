@@ -49,7 +49,7 @@ const handleCreate = async (newValue: string) => {
     return
   }
 
-  if (teams.value.some(t => t.label.toLowerCase() === newValue.toLowerCase())) {
+  if (teams.value.some(t => t.label?.toLowerCase() === newValue.toLowerCase())) {
     toast.error('This team already exists.')
     return
   }
@@ -57,7 +57,7 @@ const handleCreate = async (newValue: string) => {
   try {
     const created = await api.createTeam({ label: newValue, participants: [] })
     await fetchTeams()
-    const createdTeam = { name: created.label, value: created.id ?? 0 }
+    const createdTeam = { name: created.label || '', value: created.id ?? 0 }
     teams.value.push(created)
     selectedTeam.value = createdTeam
   } catch (error) {
@@ -66,7 +66,7 @@ const handleCreate = async (newValue: string) => {
 }
 
 const handleSearch = (search: string) => {
-  if (search && !teams.value.some(t => t.label.toLowerCase() === search.toLowerCase())) {
+  if (search && !teams.value.some(t => t.label?.toLowerCase() === search.toLowerCase())) {
     handleCreate(search)
   }
 }

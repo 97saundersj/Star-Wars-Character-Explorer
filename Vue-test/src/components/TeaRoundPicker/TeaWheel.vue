@@ -1,106 +1,146 @@
 <template>
-  <div class="tea-wheel">
-    <h2>Tea Wheel</h2>
-    <div class="wheel-container">
-      <div
-        v-if="participants.length"
-        class="wheel"
-        :class="{ spinning: isSpinning }"
-        @click="spinWheel"
+  <div class="card m-2">
+    <div class="card-body">
+      <h5 class="card-title">Pick Tea Maker</h5>
+      <button
+        class="btn btn-success btn-lg w-100 mb-3"
+        @click="pickTeaMaker"
+        :disabled="isSpinning || !participants || participants.length === 0 || !teamId"
       >
-        <div
-          v-for="(participant, index) in participants"
-          :key="participant.id"
-          class="wheel-segment"
-          :style="getSegmentStyle(index)"
-        >
-          {{ participant.name }}
+        Pick Tea Maker
+      </button>
+    </div>
+
+    <!-- Winner Modal -->
+    <div class="modal fade" :class="{ show: modalVisible }" tabindex="-1" :style="{ display: modalVisible ? 'block' : 'none' }">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tea Maker Selected</h5>
+            <button type="button" class="btn-close" @click="handleClose"></button>
+          </div>
+          <div class="modal-body text-center">
+            <div v-if="selectedParticipant" class="alert alert-success text-center mt-3">
+              🎉 {{ selectedParticipant.name }} will make the tea! 🎉
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button 
+              v-if="selectedParticipant" 
+              class="btn btn-primary" 
+              @click="pickTeaMaker"
+            >
+              Pick Again?
+            </button>
+          </div>
         </div>
       </div>
-      <div v-else class="no-participants">
-        Add participants to spin the wheel
-      </div>
     </div>
+    <div v-if="modalVisible" class="modal-backdrop fade show"></div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useToast } from 'vue-toastification'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
+import { api } from '@/services/api'
 import type { Participant } from '../../types/Types'
 
+const router = useRouter()
+const toast = useToast()
+
 const props = defineProps<{
-  teamId: number | null
   participants: Participant[]
+  teamId: number | null
 }>()
 
 const emit = defineEmits<{
-  (e: 'tea-maker-picked'): void
+  (e: 'pickedTeaMaker'): void
 }>()
 
 const isSpinning = ref(false)
+const modalVisible = ref(false)
+const selectedParticipant = ref<Participant | null>(null)
 
-const getSegmentStyle = (index: number) => {
-  const totalParticipants = props.participants.length
-  const rotation = (360 / totalParticipants) * index
-  return {
-    transform: `rotate(${rotation}deg) translate(50%)`
+const pickTeaMaker = async () => {
+  if (!props.teamId || props.participants.length === 0) {
+    toast.error('Please add participants first')
+    return
+  }
+
+  try {
+    isSpinning.value = true
+    console.log('Adding tea round for team:', props.teamId)
+    const participantId = await api.addTeaRound(props.teamId)
+    console.log('Tea round added, selected participant:', participantId)
+    
+    const selected = props.participants.find(p => p.id === participantId)
+    if (!selected) throw new Error('Selected participant not found')
+
+    selectedParticipant.value = selected
+    console.log('Emitting pickedTeaMaker event')
+    emit('pickedTeaMaker')
+    modalVisible.value = true
+    isSpinning.value = false
+  } catch (error) {
+    console.error("Error picking tea maker:", error)
+    toast.error("Error picking tea maker. Please try again.")
+    isSpinning.value = false
   }
 }
 
-const spinWheel = () => {
-  if (isSpinning.value || !props.participants.length) return
-
-  isSpinning.value = true
-  setTimeout(() => {
-    isSpinning.value = false
-    emit('tea-maker-picked')
-  }, 3000)
+const handleClose = () => {
+  isSpinning.value = false
+  modalVisible.value = false
 }
 </script>
 
 <style scoped>
-.tea-wheel {
-  margin-bottom: 1rem;
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
 }
 
-.wheel-container {
-  position: relative;
-  width: 300px;
-  height: 300px;
-  margin: 0 auto;
+.modal {
+  z-index: 1050;
 }
 
-.wheel {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 2px solid #333;
-  cursor: pointer;
-  transition: transform 3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+.modal.show {
+  display: block;
 }
 
-.wheel.spinning {
-  transform: rotate(1800deg);
+.modal-content {
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.wheel-segment {
-  position: absolute;
-  width: 50%;
-  height: 50%;
-  transform-origin: 100% 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  text-align: center;
-  padding: 0.5rem;
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
 }
 
-.no-participants {
-  text-align: center;
-  color: #666;
-  font-style: italic;
-  padding: 1rem;
+.btn-success:hover:not(:disabled) {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.btn-success:disabled {
+  background-color: #6c757d;
+  border-color: #6c757d;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+  color: #155724;
 }
 </style> 

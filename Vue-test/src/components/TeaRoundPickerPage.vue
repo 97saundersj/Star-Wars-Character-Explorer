@@ -9,7 +9,7 @@
     <ParticipantsList
       :team-id="selectedTeamId"
       :participants="participants"
-      @update:participants="setParticipants"
+      :set-participants="setParticipants"
       @participant-added="refetchTeam"
     />
 
@@ -20,6 +20,7 @@
     />
 
     <TeaRoundsTable
+      ref="teaRoundsTable"
       :team-id="selectedTeamId"
       :refresh="refetchPreviousSelections"
     />
@@ -37,10 +38,11 @@ import TeaWheel from './TeaRoundPicker/TeaWheel.vue'
 import TeaRoundsTable from './TeaRoundPicker/TeaRoundsTable.vue'
 
 const toast = useToast()
+const teaRoundsTable = ref<InstanceType<typeof TeaRoundsTable> | null>(null)
 
 const participants = ref<Participant[]>([])
 const selectedTeamId = ref<number | null>(null)
-const refetchPreviousSelections = ref<boolean>(false)
+const refetchPreviousSelections = ref<number>(Date.now())
 
 const fetchTeamById = async (teamId: number): Promise<void> => {
   try {
@@ -71,7 +73,9 @@ const handleTeamSelect = (team: Team | null): void => {
 }
 
 const pickedTeaMaker = (): void => {
-  refetchPreviousSelections.value = !refetchPreviousSelections.value
+  const newValue = Date.now()
+  console.log('Tea maker picked, refreshing table with value:', newValue)
+  refetchPreviousSelections.value = newValue
 }
 
 const refetchTeam = (): void => {
