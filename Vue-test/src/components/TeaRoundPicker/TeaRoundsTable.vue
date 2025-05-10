@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import type { Participant } from '../types/Types'
+import type { Team, Participant } from '../../types/Types'
 
 interface TeaRound {
   id: number

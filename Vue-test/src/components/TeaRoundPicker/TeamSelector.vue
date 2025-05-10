@@ -25,9 +25,10 @@ import { api } from '@/services/api'
 import { useToast } from 'vue-toastification'
 import Multiselect from '@vueform/multiselect'
 import '@vueform/multiselect/themes/default.css'
+import type { Team, Participant } from '../../types/Types'
 
 const toast = useToast()
-const teams = ref<{ label: string; value: number }[]>([])
+const teams = ref<Team[]>([])
 const selectedTeam = ref<{ name: string; value: number } | null>(null)
 
 const fetchTeams = async () => {
@@ -48,7 +49,7 @@ const handleCreate = async (newValue: string) => {
     return
   }
 
-  if (teams.value.some(t => t.name.toLowerCase() === newValue.toLowerCase())) {
+  if (teams.value.some(t => t.label.toLowerCase() === newValue.toLowerCase())) {
     toast.error('This team already exists.')
     return
   }
@@ -57,7 +58,7 @@ const handleCreate = async (newValue: string) => {
     const created = await api.createTeam({ label: newValue, participants: [] })
     await fetchTeams()
     const createdTeam = { name: created.label, value: created.id ?? 0 }
-    teams.value.push(createdTeam)
+    teams.value.push(created)
     selectedTeam.value = createdTeam
   } catch (error) {
     toast.error('Error creating team. Please try again.')
@@ -65,7 +66,7 @@ const handleCreate = async (newValue: string) => {
 }
 
 const handleSearch = (search: string) => {
-  if (search && !teams.value.some(t => t.name.toLowerCase() === search.toLowerCase())) {
+  if (search && !teams.value.some(t => t.label.toLowerCase() === search.toLowerCase())) {
     handleCreate(search)
   }
 }

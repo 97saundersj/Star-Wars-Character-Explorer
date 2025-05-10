@@ -17,7 +17,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Participant } from '../types/Types'
+import type { Team, Participant } from '../../types/Types'
 
 defineProps<{
   teamId: number | null

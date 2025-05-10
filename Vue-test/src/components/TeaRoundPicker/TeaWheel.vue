@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import type { Participant } from '../types/Types'
+import type { Participant } from '../../types/Types'
 
 const props = defineProps<{
   teamId: number | null
