@@ -1,34 +1,42 @@
 <template>
-  <div class="container">
+  <div class="container" :class="{ 'bg-dark text-light': isDarkMode }">
     <h1 class="mb-4">Tea Round Picker</h1>
 
     <TeamSelector
       @team-select="handleTeamSelect"
     />
 
-    <ParticipantsList
-      :team-id="selectedTeamId"
-      :participants="participants"
-      :set-participants="setParticipants"
-      @participant-added="refetchTeam"
-    />
+    <div v-if="selectedTeamId" class="components-container">
+      <ParticipantsList
+        :team-id="selectedTeamId"
+        :participants="participants"
+        :set-participants="setParticipants"
+        @participant-added="refetchTeam"
+      />
 
-    <TeaWheel
-      :team-id="selectedTeamId"
-      :participants="participants"
-      @tea-maker-picked="pickedTeaMaker"
-    />
+      <TeaWheel
+        v-if="participants.length > 0"
+        :team-id="selectedTeamId"
+        :participants="participants"
+        :is-dark-mode="isDarkMode"
+        @tea-maker-picked="handleTeaMakerPicked"
+      />
 
-    <TeaRoundsTable
-      ref="teaRoundsTable"
-      :team-id="selectedTeamId"
-      :refresh="refetchPreviousSelections"
-    />
+      <TeaRoundsTable
+        v-if="selectedTeamId"
+        ref="teaRoundsTable"
+        :team-id="selectedTeamId"
+      />
+    </div>
+
+    <div v-else class="text-center mt-5">
+      <p class="text-muted">Please select a team to get started</p>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import type { Team, Participant } from '../types/Types'
 import { api } from '../services/api'
 import { useToast } from 'vue-toastification'
@@ -39,10 +47,14 @@ import TeaRoundsTable from './TeaRoundPicker/TeaRoundsTable.vue'
 
 const toast = useToast()
 const teaRoundsTable = ref<InstanceType<typeof TeaRoundsTable> | null>(null)
+const isDarkMode = ref(true) // Set dark mode as default
 
 const participants = ref<Participant[]>([])
 const selectedTeamId = ref<number | null>(null)
-const refetchPreviousSelections = ref<number>(Date.now())
+
+onMounted(() => {
+  console.log('TeaRoundPickerPage mounted, teaRoundsTable ref will be available after render')
+})
 
 const fetchTeamById = async (teamId: number): Promise<void> => {
   try {
@@ -72,10 +84,14 @@ const handleTeamSelect = (team: Team | null): void => {
   }
 }
 
-const pickedTeaMaker = (): void => {
-  const newValue = Date.now()
-  console.log('Tea maker picked, refreshing table with value:', newValue)
-  refetchPreviousSelections.value = newValue
+const handleTeaMakerPicked = (): void => {
+  console.log('Tea maker picked event received, attempting to refresh table')
+  if (teaRoundsTable.value) {
+    console.log('TeaRoundsTable reference exists, calling fetchTeaRounds()')
+    teaRoundsTable.value.fetchTeaRounds()
+  } else {
+    console.error('TeaRoundsTable reference is null, cannot refresh')
+  }
 }
 
 const refetchTeam = (): void => {
@@ -92,9 +108,24 @@ const setParticipants = (newParticipants: Participant[]): void => {
 <style scoped>
 .container {
   padding: 1rem;
+  min-height: 100vh;
+  transition: all 0.3s ease;
 }
 
 .mb-4 {
   margin-bottom: 1rem;
+}
+
+.bg-dark {
+  background-color: #212529;
+}
+
+.components-container {
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.text-muted {
+  opacity: 0.7;
 }
 </style> 

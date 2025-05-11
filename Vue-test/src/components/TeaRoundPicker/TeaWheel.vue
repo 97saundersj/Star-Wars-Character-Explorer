@@ -1,5 +1,5 @@
 <template>
-  <div class="card m-2">
+  <div class="card m-2" :class="{ 'bg-dark text-light': isDarkMode }">
     <div class="card-body">
       <h5 class="card-title">Pick Tea Maker</h5>
       <button
@@ -12,19 +12,24 @@
     </div>
 
     <!-- Winner Modal -->
-    <div class="modal fade" :class="{ show: modalVisible }" tabindex="-1" :style="{ display: modalVisible ? 'block' : 'none' }">
+    <div 
+      class="modal fade" 
+      :class="{ show: modalVisible }" 
+      tabindex="-1" 
+      :style="{ display: modalVisible ? 'block' : 'none' }"
+    >
       <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-          <div class="modal-header">
+        <div class="modal-content" :class="{ 'bg-dark text-light': isDarkMode }">
+          <div class="modal-header" :class="{ 'border-secondary': isDarkMode }">
             <h5 class="modal-title">Tea Maker Selected</h5>
-            <button type="button" class="btn-close" @click="handleClose"></button>
+            <button type="button" class="btn-close" :class="{ 'btn-close-white': isDarkMode }" @click="handleClose"></button>
           </div>
           <div class="modal-body text-center">
-            <div v-if="selectedParticipant" class="alert alert-success text-center mt-3">
+            <div v-if="selectedParticipant" class="alert text-center mt-3" :class="isDarkMode ? 'alert-dark' : 'alert-success'">
               🎉 {{ selectedParticipant.name }} will make the tea! 🎉
             </div>
           </div>
-          <div class="modal-footer">
+          <div class="modal-footer" :class="{ 'border-secondary': isDarkMode }">
             <button 
               v-if="selectedParticipant" 
               class="btn btn-primary" 
@@ -41,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useToast } from 'vue-toastification'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -55,10 +60,11 @@ const toast = useToast()
 const props = defineProps<{
   participants: Participant[]
   teamId: number | null
+  isDarkMode?: boolean
 }>()
 
 const emit = defineEmits<{
-  (e: 'pickedTeaMaker'): void
+  (e: 'tea-maker-picked'): void
 }>()
 
 const isSpinning = ref(false)
@@ -81,10 +87,14 @@ const pickTeaMaker = async () => {
     if (!selected) throw new Error('Selected participant not found')
 
     selectedParticipant.value = selected
-    console.log('Emitting pickedTeaMaker event')
-    emit('pickedTeaMaker')
-    modalVisible.value = true
-    isSpinning.value = false
+    console.log('Emitting tea-maker-picked event')
+    emit('tea-maker-picked')
+    
+    // Add a slight delay to ensure the event has time to propagate
+    setTimeout(() => {
+      modalVisible.value = true
+      isSpinning.value = false
+    }, 100)
   } catch (error) {
     console.error("Error picking tea maker:", error)
     toast.error("Error picking tea maker. Please try again.")
@@ -107,10 +117,12 @@ const handleClose = () => {
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1040;
+  transition: opacity 0.3s ease;
 }
 
 .modal {
   z-index: 1050;
+  transition: opacity 0.3s ease;
 }
 
 .modal.show {
@@ -121,11 +133,18 @@ const handleClose = () => {
   background: white;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.modal-content.bg-dark {
+  background: #212529;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .btn-success {
   background-color: #28a745;
   border-color: #28a745;
+  transition: all 0.3s ease;
 }
 
 .btn-success:hover:not(:disabled) {
@@ -142,5 +161,21 @@ const handleClose = () => {
   background-color: #d4edda;
   border-color: #c3e6cb;
   color: #155724;
+  transition: all 0.3s ease;
+}
+
+.alert-dark {
+  background-color: #343a40;
+  border-color: #454d55;
+  color: #e9ecef;
+}
+
+.card.bg-dark {
+  background-color: #212529;
+  border-color: #454d55;
+}
+
+.border-secondary {
+  border-color: #454d55 !important;
 }
 </style> 
