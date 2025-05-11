@@ -68,7 +68,6 @@ import { api } from '../../services/api'
 
 const props = defineProps<{
   teamId: number | null
-  refresh: number
 }>()
 
 const teaRounds = ref<TeaRound[]>([])
@@ -90,17 +89,19 @@ const fetchTeaRounds = async (): Promise<void> => {
   }
 }
 
-// Use watchEffect with post flush
-watchEffect(() => {
-  console.log('watchEffect triggered:', { teamId: props.teamId, refresh: props.refresh })
-  if (props.teamId) {
+// Watch for teamId changes
+watch(() => props.teamId, (newTeamId) => {
+  console.log('Team ID changed to:', newTeamId)
+  if (newTeamId) {
     fetchTeaRounds()
+  } else {
+    teaRounds.value = []
   }
-}, { flush: 'post' })
+}, { immediate: true })
 
 // Initial fetch when component is mounted
 onMounted(() => {
-  console.log('Component mounted, teamId:', props.teamId)
+  console.log('TeaRoundsTable component mounted, teamId:', props.teamId)
   if (props.teamId) {
     fetchTeaRounds()
   }
