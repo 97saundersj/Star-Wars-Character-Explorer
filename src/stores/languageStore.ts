@@ -52,7 +52,7 @@ const translations = {
     itemsPerPage: 'Items per page',
     noReviews: 'No reviews yet',
     displayLimit: 'Display Limit',
-    showAll: 'Show All'
+    showAll: 'All'
   },
   au: {
     appTitle: 'Characters',
@@ -99,7 +99,7 @@ const translations = {
     itemsPerPage: 'Items per page',
     noReviews: 'No reviews yet',
     displayLimit: 'Display Limit',
-    showAll: 'Show All'
+    showAll: 'All'
   }
 }
 

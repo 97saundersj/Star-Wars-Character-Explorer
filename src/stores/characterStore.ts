@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import type { CharacterReview, CharacterState, Character } from '@/types/starWars'
+import type { CharacterReview, CharacterState, Character, StarWarsCharacter } from '@/types/starWars'
 import { starwarsApi } from '@/services/starwarsApi'
 
 export const useCharacterStore = defineStore('character', {
@@ -34,6 +34,7 @@ export const useCharacterStore = defineStore('character', {
     async fetchCharacters(page: number = 1) {
       this.loading = true
       try {
+        console.log('Character Store - Current pageSize:', this.pageSize);
         if (this.searchQuery) {
           // If we're searching, fetch all characters and filter
           const response = await starwarsApi.getAllCharacters(1, 1000)
@@ -43,8 +44,8 @@ export const useCharacterStore = defineStore('character', {
           )
 
           // Calculate pagination
-          const startIndex = (page - 1) * this.pageSize
-          const endIndex = startIndex + this.pageSize
+          const startIndex = (page - 1) * (this.pageSize === 1000 ? filteredCharacters.length : this.pageSize)
+          const endIndex = this.pageSize === 1000 ? filteredCharacters.length : startIndex + this.pageSize
 
           this.characters = filteredCharacters
             .slice(startIndex, endIndex)
@@ -56,30 +57,63 @@ export const useCharacterStore = defineStore('character', {
           this.info = {
             total: filteredCharacters.length,
             page: page,
-            limit: this.pageSize,
+            limit: this.pageSize === 1000 ? filteredCharacters.length : this.pageSize,
             next: endIndex < filteredCharacters.length ? String(page + 1) : null,
             prev: page > 1 ? String(page - 1) : null
           }
         } else {
           // Normal fetch without search
-          const response = await starwarsApi.getAllCharacters(page, this.pageSize)
-          this.characters = response.data.map((char): Character => ({
-            ...char,
-            isLiked: false
-          }))
-          this.info = response.info
+          if (this.pageSize === 1000) {
+            // When showing all, fetch all pages and combine results
+            let allCharacters: StarWarsCharacter[] = [];
+            let currentPage = 1;
+            let hasMore = true;
+
+            while (hasMore) {
+              console.log('Fetching page:', currentPage);
+              const response = await starwarsApi.getAllCharacters(currentPage);
+              allCharacters = [...allCharacters, ...response.data];
+              hasMore = !!response.info.next;
+              currentPage++;
+            }
+
+            this.characters = allCharacters.map((char): Character => ({
+              ...char,
+              isLiked: false
+            }));
+            this.info = {
+              total: allCharacters.length,
+              page: 1,
+              limit: allCharacters.length,
+              next: null,
+              prev: null
+            };
+          } else {
+            // Normal paginated fetch
+            console.log('Character Store - Calling API with:', {
+              page: page,
+              limit: this.pageSize
+            });
+            const response = await starwarsApi.getAllCharacters(page, this.pageSize);
+            this.characters = response.data.map((char): Character => ({
+              ...char,
+              isLiked: false
+            }));
+            this.info = response.info;
+          }
         }
 
-        this.currentPage = this.info.page
-        this.totalPages = Math.ceil(this.info.total / this.info.limit)
-        this.hasNextPage = !!this.info.next
-        this.hasPreviousPage = !!this.info.prev
-        this.error = null
+        // Set pagination state
+        this.currentPage = this.pageSize === 1000 ? 1 : this.info.page;
+        this.totalPages = this.pageSize === 1000 ? 1 : Math.ceil(this.info.total / this.info.limit);
+        this.hasNextPage = this.pageSize === 1000 ? false : !!this.info.next;
+        this.hasPreviousPage = this.pageSize === 1000 ? false : !!this.info.prev;
+        this.error = null;
       } catch (error) {
-        this.error = 'Failed to fetch characters'
-        console.error('Error fetching characters:', error)
+        this.error = 'Failed to fetch characters';
+        console.error('Error fetching characters:', error);
       } finally {
-        this.loading = false
+        this.loading = false;
       }
     },
 

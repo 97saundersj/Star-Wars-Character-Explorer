@@ -15,7 +15,13 @@
       <div class="card-body">
         <div class="row">
           <div class="col-md-4 mb-3 mb-md-0">
-            <img :src="character.image" :alt="character.name" class="img-fluid rounded" style="max-height: 400px; object-fit: cover;">
+            <div class="character-image-container">
+              <img
+                :src="character.image"
+                :alt="character.name"
+                class="character-image img-fluid rounded"
+              >
+            </div>
           </div>
           <div class="col-md-8">
             <p class="mb-4">{{ character.description }}</p>
@@ -169,6 +175,30 @@ const submitReview = async () => {
 
 .list-group-item:hover {
   background-color: #2b3035 !important;
+}
+
+.character-image-container {
+  width: 100%;
+  background-color: #2b3035;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.375rem;
+}
+
+.character-image {
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.character-image:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
 }
 </style>
 

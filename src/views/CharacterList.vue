@@ -41,12 +41,13 @@
           <option value="24">24</option>
           <option value="48">48</option>
           <option value="96">96</option>
+          <option value="1000">{{ languageStore.t('showAll') }}</option>
         </select>
       </div>
     </div>
 
     <!-- Top Pagination -->
-    <nav aria-label="Character list pagination top" class="mb-4">
+    <nav aria-label="Character list pagination top" class="mb-4" v-if="store.pageSize !== 1000">
       <ul class="pagination justify-content-center">
         <li class="page-item" :class="{ disabled: !store.hasPreviousPage }">
           <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(1)" :disabled="!store.hasPreviousPage">
@@ -95,42 +96,37 @@
       <div v-if="store.characters.length === 0" class="alert alert-info bg-dark text-light border-secondary">
         {{ languageStore.t('noResults') }}
       </div>
-      <div v-else class="row g-3 mb-4">
-        <div v-for="character in store.characters" :key="character.name" class="col-6 col-sm-4 col-md-3 col-lg-2">
-          <div class="card bg-dark text-light border-secondary h-100">
-            <div class="card-header d-flex justify-content-between align-items-center border-secondary py-2">
-              <h6 class="card-title mb-0 text-truncate">{{ character.name }}</h6>
-              <button
-                class="btn btn-link text-danger p-0"
-                @click="store.toggleLike(character.name)"
-              >
-                <i :class="character.isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-              </button>
-            </div>
-            <div class="card-body p-0 overflow-hidden">
+      <div v-else class="row g-3 mb-2">
+        <div v-for="character in store.characters" :key="character.name" class="col-6 col-md-3">
+          <RouterLink
+            :to="{ name: 'character-detail', params: { name: character.name }}"
+            class="text-decoration-none"
+          >
+            <div class="card bg-dark text-light border-secondary">
+              <div class="card-header d-flex justify-content-between align-items-center border-secondary py-2">
+                <h6 class="card-title mb-0 text-truncate">{{ character.name }}</h6>
+                <button
+                  class="btn btn-link text-danger p-0"
+                  @click.prevent="store.toggleLike(character.name)"
+                >
+                  <i :class="character.isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
+                </button>
+              </div>
               <div class="character-image-container">
                 <img
                   :src="character.image"
                   :alt="character.name"
-                  class="img-fluid rounded-bottom character-image"
+                  class="img-fluid character-image"
                   loading="lazy"
                 >
               </div>
             </div>
-            <div class="card-footer border-secondary py-2">
-              <RouterLink
-                :to="{ name: 'character-detail', params: { name: character.name }}"
-                class="btn btn-primary btn-sm w-100"
-              >
-                {{ languageStore.t('viewDetails') }}
-              </RouterLink>
-            </div>
-          </div>
+          </RouterLink>
         </div>
       </div>
 
       <!-- Bottom Pagination -->
-      <nav aria-label="Character list pagination bottom">
+      <nav aria-label="Character list pagination bottom" v-if="store.pageSize !== 1000">
         <ul class="pagination justify-content-center">
           <li class="page-item" :class="{ disabled: !store.hasPreviousPage }">
             <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(1)" :disabled="!store.hasPreviousPage">
@@ -231,10 +227,19 @@ watch(() => store.currentPage, async (newPage) => {
 <style scoped>
 .card {
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
 }
 
 .card:hover {
   box-shadow: 0 0 15px rgba(13, 110, 253, 0.3);
+}
+
+.card-header {
+  padding: 0.5rem;
+  margin: 0;
 }
 
 .character-image-container {
@@ -246,6 +251,10 @@ watch(() => store.currentPage, async (newPage) => {
   justify-content: center;
   position: relative;
   overflow: hidden;
+  margin: 0;
+  padding: 5px;
+  flex: 1;
+  line-height: 0;
 }
 
 .character-image {
@@ -254,9 +263,13 @@ watch(() => store.currentPage, async (newPage) => {
   object-fit: cover;
   object-position: top;
   transition: all 0.3s ease;
+  margin: 0;
+  padding: 0;
+  display: block;
+  line-height: 0;
 }
 
-.card:hover .character-image {
+.character-image:hover {
   transform: scale(1.05);
   filter: brightness(1.1);
 }
