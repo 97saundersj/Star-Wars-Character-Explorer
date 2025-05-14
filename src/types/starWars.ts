@@ -1,20 +1,6 @@
-export interface Character {
-  name: string
-  height: string
-  mass: string
-  hair_color: string
-  skin_color: string
-  eye_color: string
-  birth_year: string
-  gender: string
-  homeworld: string
-  films: string[]
-  species: string[]
-  vehicles: string[]
-  starships: string[]
-  created: string
-  edited: string
-  url: string
+import type { IPeople } from 'swapi-ts'
+
+export type Character = IPeople & {
   isLiked?: boolean
 }
 
@@ -33,4 +19,9 @@ export interface CharacterState {
   loading: boolean
   error: string | null
   reviews: CharacterReview[]
+  currentPage: number
+  totalPages: number
+  hasNextPage: boolean
+  hasPreviousPage: boolean
+  searchQuery: string
 }

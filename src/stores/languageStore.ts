@@ -8,7 +8,7 @@ interface LanguageState {
 
 const translations = {
   en: {
-    appTitle: 'Star Wars Characters',
+    appTitle: 'Characters',
     birthYear: 'Birth Year',
     gender: 'Gender',
     height: 'Height',
@@ -26,13 +26,21 @@ const translations = {
     reviews: 'Reviews',
     watchedOn: 'Watched on',
     reviewedBy: 'Reviewed by',
-    backToCharacters: 'Back to Characters',
+    backToCharacters: 'Back',
     loading: 'Loading...',
     error: 'Failed to fetch characters',
-    on: 'on'
+    on: 'on',
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+    of: 'of',
+    searchCharacters: 'Search character names...',
+    searchLabel: 'Character Search',
+    clearSearch: 'Clear search',
+    noResults: 'No characters found'
   },
   au: {
-    appTitle: 'STAR WARS',
+    appTitle: 'CHARACTERS',
     birthYear: 'BIRTH YEAR',
     gender: 'GENDER',
     height: 'HEIGHT',
@@ -50,10 +58,18 @@ const translations = {
     reviews: 'REVIEWS',
     watchedOn: 'WATCHED ON',
     reviewedBy: 'REVIEWED BY',
-    backToCharacters: 'BACK TO CHARACTERS',
+    backToCharacters: 'BACK',
     loading: 'LOADING...',
     error: 'FAILED TO FETCH CHARACTERS',
-    on: 'ON'
+    on: 'ON',
+    previous: 'PREVIOUS',
+    next: 'NEXT',
+    page: 'PAGE',
+    of: 'OF',
+    searchCharacters: 'SEARCH CHARACTER NAMES...',
+    searchLabel: 'CHARACTER SEARCH',
+    clearSearch: 'CLEAR SEARCH',
+    noResults: 'NO CHARACTERS FOUND'
   }
 }
 

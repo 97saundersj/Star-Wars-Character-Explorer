@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
       <div class="container">
         <RouterLink class="navbar-brand fw-bold" to="/">
-          <i class="bi bi-cup-hot me-2"></i>Tea Round Picker
+          <i class="bi bi-stars me-2"></i>Star Wars Character Explorer
         </RouterLink>
         <button
           class="navbar-toggler"
@@ -20,17 +20,7 @@
           <ul class="navbar-nav me-auto">
             <li class="nav-item">
               <RouterLink class="nav-link px-3" to="/">
-                <i class="bi bi-house-door me-1"></i>Home
-              </RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link px-3" to="/tea-rounds">
-                <i class="bi bi-cup-hot me-1"></i>Tea Round
-              </RouterLink>
-            </li>
-            <li class="nav-item">
-              <RouterLink class="nav-link px-3" to="/star-wars">
-                <i class="bi bi-stars me-1"></i>Star Wars
+                <i class="bi bi-person-vcard me-1"></i>Characters
               </RouterLink>
             </li>
             <li class="nav-item">
