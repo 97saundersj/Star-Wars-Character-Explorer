@@ -51,14 +51,6 @@ The application uses the Star Wars API (SWAPI) for character data:
   - /people/ - List of characters
   - /people/{id}/ - Character details
 
-## C# API Endpoint (Bonus)
-
-A C# API endpoint is included for handling reviews. This is a simple implementation that stores reviews in memory. In a production environment, this would be connected to a database.
-
-The API provides the following endpoints:
-- POST /api/reviews - Create a new review
-- GET /api/reviews/{id} - Get a specific review
-- GET /api/reviews/character/{characterName} - Get all reviews for a character
 
 ## Project Structure
 
@@ -69,8 +61,7 @@ src/
 ├── router/         # Vue Router configuration
 ├── stores/         # Pinia stores
 ├── types/          # TypeScript type definitions
-├── views/          # Vue page components
-└── services/       # API services and C# endpoints
+└── views/          # Vue page components
 ```
 
 ## Development Notes
@@ -79,4 +70,3 @@ src/
 - State management is handled by Pinia
 - TypeScript is used for type safety
 - The review submission is designed to fail as per requirements, with local storage as a fallback
-- The C# API endpoint is included as a bonus feature to demonstrate backend integration
