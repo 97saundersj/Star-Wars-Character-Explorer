@@ -51,8 +51,9 @@ const translations = {
     noResults: 'No characters found',
     itemsPerPage: 'Items per page',
     noReviews: 'No reviews yet',
-    displayLimit: 'Display Limit',
-    showAll: 'All'
+    displayLimit: 'Results',
+    showAll: 'All',
+    results: 'results'
   },
   au: {
     appTitle: 'Characters',
@@ -98,8 +99,9 @@ const translations = {
     noResults: 'No characters found',
     itemsPerPage: 'Items per page',
     noReviews: 'No reviews yet',
-    displayLimit: 'Display Limit',
-    showAll: 'All'
+    displayLimit: 'Results',
+    showAll: 'All',
+    results: 'results'
   }
 }
 

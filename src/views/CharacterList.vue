@@ -1,173 +1,102 @@
 <template>
-  <div>
-    <h1 class="text-light mb-4">{{ languageStore.t('appTitle') }}</h1>
+  <BContainer class="py-4">
+    <div class="mb-5">
+      <h1 class="text-light display-4 fw-bold mb-3">{{ languageStore.t('appTitle') }}</h1>
+    </div>
 
-    <div class="mb-4">
-      <div class="input-group">
-        <span class="input-group-text bg-dark text-light border-secondary">
+    <BFormGroup class="mb-5">
+      <BInputGroup size="lg">
+        <BInputGroupText class="bg-dark text-light border-secondary">
           <i class="bi bi-search"></i>
-        </span>
-        <input
+        </BInputGroupText>
+        <BFormInput
           type="text"
-          class="form-control bg-dark text-light border-secondary"
+          class="bg-dark text-light border-secondary"
           :placeholder="languageStore.t('searchCharacters')"
-          :value="store.searchQuery"
+          v-model="store.searchQuery"
           @input="handleSearch"
-        >
-        <button
+        />
+        <BButton
           v-if="store.searchQuery"
-          class="btn btn-outline-secondary text-light border-secondary"
-          type="button"
+          variant="outline-secondary"
+          class="text-light border-secondary"
           @click="clearSearch"
           :title="languageStore.t('clearSearch')"
         >
           <i class="bi bi-x-lg"></i>
-        </button>
-      </div>
-    </div>
+        </BButton>
+      </BInputGroup>
+    </BFormGroup>
 
-    <!-- Page Size Selector and Top Pagination -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="d-flex align-items-center">
-        <label for="pageSize" class="text-light me-2">{{ languageStore.t('displayLimit') }}:</label>
-        <select
-          id="pageSize"
-          class="form-select bg-dark text-light border-secondary"
-          style="width: auto;"
-          v-model="store.pageSize"
-          @change="handlePageSizeChange"
-        >
-          <option value="12">12</option>
-          <option value="24">24</option>
-          <option value="48">48</option>
-          <option value="96">96</option>
-          <option value="1000">{{ languageStore.t('showAll') }}</option>
-        </select>
-      </div>
-    </div>
+    <CharacterPagination />
 
-    <!-- Top Pagination -->
-    <nav aria-label="Character list pagination top" class="mb-4" v-if="store.pageSize !== 1000">
-      <ul class="pagination justify-content-center">
-        <li class="page-item" :class="{ disabled: !store.hasPreviousPage }">
-          <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(1)" :disabled="!store.hasPreviousPage">
-            <i class="bi bi-chevron-double-left"></i>
-          </button>
-        </li>
-        <li class="page-item" :class="{ disabled: !store.hasPreviousPage }">
-          <button class="page-link bg-dark text-light border-secondary" @click="store.previousPage" :disabled="!store.hasPreviousPage">
-            <i class="bi bi-chevron-left"></i>
-          </button>
-        </li>
-        <template v-for="page in store.totalPages" :key="page">
-          <li v-if="shouldShowPage(page)" class="page-item" :class="{ active: page === store.currentPage }">
-            <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(page)">
-              {{ page }}
-            </button>
-          </li>
-          <li v-else-if="shouldShowEllipsis(page)" class="page-item disabled">
-            <span class="page-link bg-dark text-light border-secondary">...</span>
-          </li>
-        </template>
-        <li class="page-item" :class="{ disabled: !store.hasNextPage }">
-          <button class="page-link bg-dark text-light border-secondary" @click="store.nextPage" :disabled="!store.hasNextPage">
-            <i class="bi bi-chevron-right"></i>
-          </button>
-        </li>
-        <li class="page-item" :class="{ disabled: !store.hasNextPage }">
-          <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(store.totalPages)" :disabled="!store.hasNextPage">
-            <i class="bi bi-chevron-double-right"></i>
-          </button>
-        </li>
-      </ul>
-    </nav>
+    <BSpinner v-if="store.loading" class="text-light my-5" style="width: 3rem; height: 3rem;" />
 
-    <div v-if="store.loading" class="text-center my-4">
-      <div class="spinner-border text-light" role="status">
-        <span class="visually-hidden">{{ languageStore.t('loading') }}</span>
-      </div>
-    </div>
-
-    <div v-else-if="store.error" class="alert alert-danger">
+    <BAlert v-else-if="store.error" variant="danger" show class="mb-4">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
       {{ languageStore.t('error') }}
-    </div>
+    </BAlert>
 
     <div v-else>
-      <div v-if="store.characters.length === 0" class="alert alert-info bg-dark text-light border-secondary">
+      <BAlert v-if="store.characters.length === 0" variant="dark" show class="mb-4">
+        <i class="bi bi-info-circle-fill me-2"></i>
         {{ languageStore.t('noResults') }}
-      </div>
-      <div v-else class="row g-3 mb-2">
-        <div v-for="character in store.characters" :key="character.name" class="col-6 col-md-3">
+      </BAlert>
+      <BRow v-else class="g-4">
+        <BCol v-for="character in store.characters" :key="character.name" cols="6" md="4" lg="3">
           <RouterLink
             :to="{ name: 'character-detail', params: { name: character.name }}"
             class="text-decoration-none"
           >
-            <div class="card bg-dark text-light border-secondary">
-              <div class="card-header d-flex justify-content-between align-items-center border-secondary py-2">
-                <h6 class="card-title mb-0 text-truncate">{{ character.name }}</h6>
-                <button
-                  class="btn btn-link text-danger p-0"
-                  @click.prevent="store.toggleLike(character.name)"
-                >
-                  <i :class="character.isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'"></i>
-                </button>
-              </div>
-              <div class="character-image-container">
-                <img
-                  :src="character.image"
-                  :alt="character.name"
-                  class="img-fluid character-image"
-                  loading="lazy"
-                >
-              </div>
-            </div>
+            <BCard
+              class="bg-dark text-light border-secondary h-100"
+            >
+              <template #header>
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="card-title mb-0 text-truncate fw-medium">{{ character.name }}</h6>
+                  <BButton
+                    variant="link"
+                    class="text-danger p-0"
+                    @click.prevent="store.toggleLike(character.name)"
+                  >
+                    <i :class="character.isLiked ? 'bi bi-heart-fill' : 'bi bi-heart'" class="fs-5"></i>
+                  </BButton>
+                </div>
+              </template>
+              <img
+                :src="character.image"
+                :alt="character.name"
+                class="card-img"
+                loading="lazy"
+              >
+            </BCard>
           </RouterLink>
-        </div>
-      </div>
-
-      <!-- Bottom Pagination -->
-      <nav aria-label="Character list pagination bottom" v-if="store.pageSize !== 1000">
-        <ul class="pagination justify-content-center">
-          <li class="page-item" :class="{ disabled: !store.hasPreviousPage }">
-            <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(1)" :disabled="!store.hasPreviousPage">
-              <i class="bi bi-chevron-double-left"></i>
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: !store.hasPreviousPage }">
-            <button class="page-link bg-dark text-light border-secondary" @click="store.previousPage" :disabled="!store.hasPreviousPage">
-              <i class="bi bi-chevron-left"></i>
-            </button>
-          </li>
-          <template v-for="page in store.totalPages" :key="page">
-            <li v-if="shouldShowPage(page)" class="page-item" :class="{ active: page === store.currentPage }">
-              <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(page)">
-                {{ page }}
-              </button>
-            </li>
-            <li v-else-if="shouldShowEllipsis(page)" class="page-item disabled">
-              <span class="page-link bg-dark text-light border-secondary">...</span>
-            </li>
-          </template>
-          <li class="page-item" :class="{ disabled: !store.hasNextPage }">
-            <button class="page-link bg-dark text-light border-secondary" @click="store.nextPage" :disabled="!store.hasNextPage">
-              <i class="bi bi-chevron-right"></i>
-            </button>
-          </li>
-          <li class="page-item" :class="{ disabled: !store.hasNextPage }">
-            <button class="page-link bg-dark text-light border-secondary" @click="store.fetchCharacters(store.totalPages)" :disabled="!store.hasNextPage">
-              <i class="bi bi-chevron-double-right"></i>
-            </button>
-          </li>
-        </ul>
-      </nav>
+        </BCol>
+      </BRow>
     </div>
-  </div>
+
+    <CharacterPagination :is-bottom="true" />
+  </BContainer>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
+import CharacterPagination from '@/components/CharacterPagination.vue'
+import {
+  BContainer,
+  BFormGroup,
+  BInputGroup,
+  BInputGroupText,
+  BFormInput,
+  BButton,
+  BRow,
+  BCol,
+  BSpinner,
+  BAlert,
+  BCard
+} from 'bootstrap-vue-next'
 
 const store = useCharacterStore()
 const languageStore = useLanguageStore()
@@ -188,125 +117,77 @@ const clearSearch = async () => {
   await store.fetchCharacters(1)
 }
 
-const handlePageSizeChange = async () => {
-  await store.fetchCharacters(1)
-}
-
-const shouldShowPage = (page: number) => {
-  const currentPage = store.currentPage
-  const totalPages = store.totalPages
-  const maxVisiblePages = 5
-
-  if (totalPages <= maxVisiblePages) return true
-  if (page === 1 || page === totalPages) return true
-  if (page >= currentPage - 1 && page <= currentPage + 1) return true
-  return false
-}
-
-const shouldShowEllipsis = (page: number) => {
-  const currentPage = store.currentPage
-  const totalPages = store.totalPages
-  const maxVisiblePages = 5
-
-  if (totalPages <= maxVisiblePages) return false
-  if (page === 1 || page === totalPages) return false
-  if (page === currentPage - 2 || page === currentPage + 2) return true
-  return false
-}
-
 onMounted(async () => {
   await store.fetchCharacters()
 })
 
-// Add watchers for pagination
 watch(() => store.currentPage, async (newPage) => {
-  await store.fetchCharacters(newPage)
+  await store.fetchCharacters(Number(newPage))
 })
 </script>
 
 <style scoped>
-.card {
-  transition: all 0.3s ease;
+:deep(.card) {
   display: flex;
   flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+:deep(.card-header) {
+  background-color: transparent !important;
+  border-bottom: 1px solid #6c757d !important;
+  padding: 0.75rem;
+}
+
+:deep(.card-header .btn-link) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.card-header .btn-link:hover) {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+:deep(.card:hover) {
+  transform: translateY(-2px);
+}
+
+:deep(.card-body) {
   padding: 0;
-  margin: 0;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 }
 
-.card:hover {
-  box-shadow: 0 0 15px rgba(13, 110, 253, 0.3);
-}
-
-.card-header {
-  padding: 0.5rem;
-  margin: 0;
-}
-
-.character-image-container {
+:deep(.card-img) {
   width: 100%;
   aspect-ratio: 16/9;
-  background-color: #2b3035;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  margin: 0;
-  padding: 5px;
-  flex: 1;
-  line-height: 0;
-}
-
-.character-image {
-  width: 100%;
-  height: 100%;
   object-fit: cover;
   object-position: top;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease;
   margin: 0;
   padding: 0;
-  display: block;
-  line-height: 0;
 }
 
-.character-image:hover {
+:deep(.card:hover .card-img) {
   transform: scale(1.05);
-  filter: brightness(1.1);
 }
 
-.page-link {
-  transition: all 0.2s;
-  min-width: 40px;
-  text-align: center;
-  padding: 0.5rem 0.75rem;
+:deep(a) {
+  outline: none !important;
+  text-decoration: none !important;
+  padding: 0 !important;
 }
 
-.page-link:hover:not(:disabled) {
-  background-color: #2b3035 !important;
-  border-color: #6c757d !important;
-  transform: translateY(-1px);
+:deep(a:focus) {
+  outline: none !important;
 }
 
-.page-link:disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.page-item.active .page-link {
-  background-color: #0d6efd !important;
-  border-color: #0d6efd !important;
-  box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
-
-.page-item.disabled .page-link {
-  background-color: #212529 !important;
-  border-color: #6c757d !important;
-  opacity: 0.5;
-}
-
-.pagination {
-  margin-bottom: 0;
-  gap: 0.25rem;
+:deep(a:focus-visible) {
+  outline: none !important;
 }
 
 ::placeholder {
@@ -322,22 +203,28 @@ watch(() => store.currentPage, async (newPage) => {
   color: #6c757d !important;
 }
 
-/* Image loading placeholder */
-img {
+/* Custom pagination styling */
+:deep(.page-link) {
+  background-color: #212529;
+  border-color: #6c757d;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+:deep(.page-link:hover) {
   background-color: #2b3035;
+  border-color: #0d6efd;
+  transform: translateY(-1px);
 }
 
-.no-image-text {
-  color: #6c757d;
-  text-align: center;
-  padding: 1rem;
+:deep(.page-item.active .page-link) {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
 }
 
-.image-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
+:deep(.page-item.disabled .page-link) {
+  background-color: #212529;
+  border-color: #6c757d;
+  opacity: 0.5;
 }
 </style>
