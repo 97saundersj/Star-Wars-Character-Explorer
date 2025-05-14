@@ -78,6 +78,11 @@ const languageStore = useLanguageStore()
   border-color: #0d6efd;
 }
 
+/* Force Star Wars blue color on all text */
+* {
+  color: #00bfff !important;
+}
+
 /* Apply Aurebesh font when language is set to Aurebesh */
 html[data-language="au"] {
   font-family: 'Aurebesh', sans-serif !important;

@@ -1,17 +1,6 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
 import type { CharacterReview, CharacterState, Character } from '@/types/starWars'
-import type { IPeople } from 'swapi-ts'
-
-// Configure SWAPI to use HTTPS endpoint
-const SWAPI_BASE_URL = 'https://swapi.py4e.com/api'
-
-interface SWAPIResponse {
-  count: number
-  next: string | null
-  previous: string | null
-  results: IPeople[]
-}
+import { starwarsApi } from '@/services/starwarsApi'
 
 export const useCharacterStore = defineStore('character', {
   state: (): CharacterState => ({
@@ -23,22 +12,68 @@ export const useCharacterStore = defineStore('character', {
     totalPages: 1,
     hasNextPage: false,
     hasPreviousPage: false,
-    searchQuery: ''
+    searchQuery: '',
+    pageSize: 24,
+    info: {
+      total: 0,
+      page: 1,
+      limit: 24,
+      next: null,
+      prev: null
+    }
   }),
 
   actions: {
+    // Helper function to normalize strings for search
+    normalizeSearchString(str: string): string {
+      return str
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, '') // Remove all non-alphanumeric characters
+    },
+
     async fetchCharacters(page: number = 1) {
       this.loading = true
       try {
-        const response = await axios.get<SWAPIResponse>(`${SWAPI_BASE_URL}/people/?page=${page}`)
-        this.characters = response.data.results.map((char: IPeople): Character => ({
-          ...char,
-          isLiked: false
-        }))
-        this.currentPage = page
-        this.totalPages = Math.ceil(response.data.count / 10)
-        this.hasNextPage = !!response.data.next
-        this.hasPreviousPage = !!response.data.previous
+        if (this.searchQuery) {
+          // If we're searching, fetch all characters and filter
+          const response = await starwarsApi.getAllCharacters(1, 1000)
+          const normalizedQuery = this.normalizeSearchString(this.searchQuery)
+          const filteredCharacters = response.data.filter(char =>
+            this.normalizeSearchString(char.name).includes(normalizedQuery)
+          )
+
+          // Calculate pagination
+          const startIndex = (page - 1) * this.pageSize
+          const endIndex = startIndex + this.pageSize
+
+          this.characters = filteredCharacters
+            .slice(startIndex, endIndex)
+            .map((char): Character => ({
+              ...char,
+              isLiked: false
+            }))
+
+          this.info = {
+            total: filteredCharacters.length,
+            page: page,
+            limit: this.pageSize,
+            next: endIndex < filteredCharacters.length ? String(page + 1) : null,
+            prev: page > 1 ? String(page - 1) : null
+          }
+        } else {
+          // Normal fetch without search
+          const response = await starwarsApi.getAllCharacters(page, this.pageSize)
+          this.characters = response.data.map((char): Character => ({
+            ...char,
+            isLiked: false
+          }))
+          this.info = response.info
+        }
+
+        this.currentPage = this.info.page
+        this.totalPages = Math.ceil(this.info.total / this.info.limit)
+        this.hasNextPage = !!this.info.next
+        this.hasPreviousPage = !!this.info.prev
         this.error = null
       } catch (error) {
         this.error = 'Failed to fetch characters'
@@ -52,15 +87,36 @@ export const useCharacterStore = defineStore('character', {
       this.loading = true
       this.searchQuery = query
       try {
-        const response = await axios.get<SWAPIResponse>(`${SWAPI_BASE_URL}/people/?search=${encodeURIComponent(query)}`)
-        this.characters = response.data.results.map((char: IPeople): Character => ({
-          ...char,
-          isLiked: false
-        }))
+        // Fetch all characters first
+        const response = await starwarsApi.getAllCharacters(1, 1000)
+        const normalizedQuery = this.normalizeSearchString(query)
+        const filteredCharacters = response.data.filter(char =>
+          this.normalizeSearchString(char.name).includes(normalizedQuery)
+        )
+
+        // Update pagination info
+        this.info = {
+          total: filteredCharacters.length,
+          page: 1,
+          limit: this.pageSize,
+          next: null,
+          prev: null
+        }
+
+        // Get the first page of filtered results
+        const startIndex = 0
+        const endIndex = this.pageSize
+        this.characters = filteredCharacters
+          .slice(startIndex, endIndex)
+          .map((char): Character => ({
+            ...char,
+            isLiked: false
+          }))
+
         this.currentPage = 1
-        this.totalPages = Math.ceil(response.data.count / 10)
-        this.hasNextPage = !!response.data.next
-        this.hasPreviousPage = !!response.data.previous
+        this.totalPages = Math.ceil(filteredCharacters.length / this.pageSize)
+        this.hasNextPage = filteredCharacters.length > this.pageSize
+        this.hasPreviousPage = false
         this.error = null
       } catch (error) {
         this.error = 'Failed to search characters'
@@ -92,7 +148,7 @@ export const useCharacterStore = defineStore('character', {
     async submitReview(review: Omit<CharacterReview, 'id' | 'createdAt'>) {
       try {
         // This will fail as specified in the requirements
-        await fetch(`${SWAPI_BASE_URL}/reviews/`, {
+        await fetch('https://akabab.github.io/starwars-api/api/reviews/', {
           method: 'POST',
           body: JSON.stringify(review)
         })
@@ -121,9 +177,9 @@ export const useCharacterStore = defineStore('character', {
     },
     filteredCharacters: (state) => {
       if (!state.searchQuery) return state.characters
-      const query = state.searchQuery.toLowerCase()
+      const normalizedQuery = state.searchQuery.toLowerCase().replace(/[^a-z0-9]/g, '')
       return state.characters.filter(char =>
-        char.name.toLowerCase().includes(query)
+        char.name.toLowerCase().replace(/[^a-z0-9]/g, '').includes(normalizedQuery)
       )
     }
   }
