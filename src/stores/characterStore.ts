@@ -206,9 +206,6 @@ export const useCharacterStore = defineStore('character', {
     getLikedCharacters: (state) => {
       return state.characters.filter(char => char.isLiked)
     },
-    getCharacterReviews: (state) => (characterName: string) => {
-      return state.reviews.filter(review => review.characterName === characterName)
-    },
     filteredCharacters: (state) => {
       if (!state.searchQuery) return state.characters
       const normalizedQuery = state.searchQuery.toLowerCase().replace(/[^a-z0-9]/g, '')

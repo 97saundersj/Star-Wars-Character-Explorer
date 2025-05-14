@@ -20,6 +20,10 @@ const router = createRouter({
       name: 'character-detail',
       component: CharacterDetail,
       props: true
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: { name: 'star-wars' }
     }
   ]
 })
