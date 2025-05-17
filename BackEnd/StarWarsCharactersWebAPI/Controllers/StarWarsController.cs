@@ -1,25 +1,20 @@
 using Microsoft.AspNetCore.Mvc;
-using StarWarsCharactersWebAPI.Services;
+using StarWarsCharactersWebAPI.Services.Interfaces;
 using StarWarsCharactersWebAPI.Models;
 
 namespace StarWarsCharactersWebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StarWarsController : ControllerBase
+    public class StarWarsController(ICharacterService starWarsService) : ControllerBase
     {
-        private readonly IStarWarsService _starWarsService;
-
-        public StarWarsController(IStarWarsService starWarsService)
-        {
-            _starWarsService = starWarsService;
-        }
+        private readonly ICharacterService _starWarsService = starWarsService;
 
         [HttpGet("characters")]
         public async Task<ActionResult<StarWarsResponse>> GetAllCharacters(
             [FromQuery] int page = 1,
-            [FromQuery] int? limit = null,
-            [FromQuery] string search = null)
+            [FromQuery] int? limit = 10,
+            [FromQuery] string? search = null)
         {
             try
             {
@@ -50,4 +45,4 @@ namespace StarWarsCharactersWebAPI.Controllers
             }
         }
     }
-} 
+}

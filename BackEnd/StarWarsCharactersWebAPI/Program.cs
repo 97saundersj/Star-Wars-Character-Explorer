@@ -1,3 +1,4 @@
+using StarWarsCharactersWebAPI.Services.Interfaces;
 using StarWarsCharactersWebAPI.Services;
 
 namespace StarWarsCharactersWebAPI;
@@ -13,12 +14,14 @@ public class Program
             .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             });
 
         // Add Star Wars services
         builder.Services.AddHttpClient();
         builder.Services.AddMemoryCache();
-        builder.Services.AddScoped<IStarWarsService, StarWarsService>();
+        builder.Services.AddScoped<ICharacterCacheService, CharacterCacheService>();
+        builder.Services.AddScoped<ICharacterService, CharacterService>();
 
         // Add CORS services
         builder.Services.AddCors(options =>

@@ -1,8 +1,7 @@
-using System.Net;
-using System.Text.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using StarWarsCharactersWebAPI.Models;
-using Xunit;
+using System.Net;
+using System.Text.Json;
 
 namespace StarWarsCharactersWebAPI.Tests;
 
@@ -42,8 +41,8 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.NotNull(result);
-        Assert.Equal(limit, result.info.limit);
-        Assert.Equal(limit, result.data.Count);
+        Assert.Equal(limit, result.Info.Limit);
+        Assert.Equal(limit, result.Data.Count);
     }
 
     [Fact]
@@ -60,10 +59,10 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.NotNull(result);
-        Assert.All(result.data, character => 
+        Assert.All(result.Data, character =>
             Assert.True(
-                character.name.ToLowerInvariant().Contains(searchTerm.ToLowerInvariant()) ||
-                (character.description?.ToLowerInvariant().Contains(searchTerm.ToLowerInvariant()) ?? false)
+                character.Name.ToLowerInvariant().Contains(searchTerm.ToLowerInvariant()) ||
+                (character.Description?.ToLowerInvariant().Contains(searchTerm.ToLowerInvariant()) ?? false)
             )
         );
     }
@@ -76,7 +75,7 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         var listResponse = await _client.GetAsync("/api/StarWars/characters");
         var listContent = await listResponse.Content.ReadAsStringAsync();
         var listResult = JsonSerializer.Deserialize<StarWarsResponse>(listContent);
-        var validId = listResult.data.First()._id;
+        var validId = listResult.Data.First().Id;
 
         // Act
         var response = await _client.GetAsync($"/api/StarWars/characters/{validId}");
@@ -86,7 +85,7 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.NotNull(character);
-        Assert.Equal(validId, character._id);
+        Assert.Equal(validId, character.Id);
     }
 
     [Fact]
@@ -116,8 +115,8 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.NotNull(result);
-        Assert.Equal(result.info.total, result.data.Count);
-        Assert.Null(result.info.next); // Should be no next page
+        Assert.Equal(result.Info.Total, result.Data.Count);
+        Assert.Null(result.Info.Next); // Should be no next page
     }
 
     [Fact]
@@ -135,8 +134,8 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         // Assert
         response.EnsureSuccessStatusCode();
         Assert.NotNull(result);
-        Assert.Equal(page, result.info.page);
-        Assert.Equal(limit, result.info.limit);
-        Assert.NotNull(result.info.prev); // Should have previous page
+        Assert.Equal(page, result.Info.Page);
+        Assert.Equal(limit, result.Info.Limit);
+        Assert.NotNull(result.Info.Prev); // Should have previous page
     }
-} 
+}
