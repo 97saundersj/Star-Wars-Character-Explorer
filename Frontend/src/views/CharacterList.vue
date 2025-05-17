@@ -80,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
 import CharacterPagination from '@/components/CharacterPagination.vue'
@@ -119,10 +119,6 @@ const clearSearch = async () => {
 
 onMounted(async () => {
   await store.fetchCharacters()
-})
-
-watch(() => store.currentPage, async (newPage) => {
-  await store.fetchCharacters(Number(newPage))
 })
 </script>
 

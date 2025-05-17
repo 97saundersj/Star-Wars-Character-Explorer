@@ -28,6 +28,7 @@ namespace StarWarsCharactersWebAPI.Services
             return characters
                 .Where(c => c.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                           (c.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false))
+                .OrderBy(c => !c.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
 

@@ -24,140 +24,38 @@ export const useCharacterStore = defineStore('character', {
   }),
 
   actions: {
-    // Helper function to normalize strings for search
-    normalizeSearchString(str: string): string {
-      return str
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, '') // Remove all non-alphanumeric characters
-    },
-
     async fetchCharacters(page: number = 1) {
       this.loading = true
       try {
-        console.log('Character Store - Current pageSize:', this.pageSize);
-        if (this.searchQuery) {
-          // If we're searching, fetch all characters and filter
-          const response = await starwarsApi.getAllCharacters(1, 1000)
-          const normalizedQuery = this.normalizeSearchString(this.searchQuery)
-          const filteredCharacters = response.data.filter(char =>
-            this.normalizeSearchString(char.name).includes(normalizedQuery)
-          )
+        const search = typeof this.searchQuery === 'string' ? this.searchQuery : '';
+        const response = await starwarsApi.getAllCharacters(
+          page,
+          this.pageSize,
+          search
+        );
 
-          // Calculate pagination
-          const startIndex = (page - 1) * (this.pageSize === 1000 ? filteredCharacters.length : this.pageSize)
-          const endIndex = this.pageSize === 1000 ? filteredCharacters.length : startIndex + this.pageSize
-
-          this.characters = filteredCharacters
-            .slice(startIndex, endIndex)
-            .map((char): Character => ({
-              ...char,
-              isLiked: false
-            }))
-
-          this.info = {
-            total: filteredCharacters.length,
-            page: page,
-            limit: this.pageSize === 1000 ? filteredCharacters.length : this.pageSize,
-            next: endIndex < filteredCharacters.length ? String(page + 1) : null,
-            prev: page > 1 ? String(page - 1) : null
-          }
-        } else {
-          // Normal fetch without search
-          if (this.pageSize === 1000) {
-            // When showing all, fetch all pages and combine results
-            let allCharacters: StarWarsCharacter[] = [];
-            let currentPage = 1;
-            let hasMore = true;
-
-            while (hasMore) {
-              console.log('Fetching page:', currentPage);
-              const response = await starwarsApi.getAllCharacters(currentPage);
-              allCharacters = [...allCharacters, ...response.data];
-              hasMore = !!response.info.next;
-              currentPage++;
-            }
-
-            this.characters = allCharacters.map((char): Character => ({
-              ...char,
-              isLiked: false
-            }));
-            this.info = {
-              total: allCharacters.length,
-              page: 1,
-              limit: allCharacters.length,
-              next: null,
-              prev: null
-            };
-          } else {
-            // Normal paginated fetch
-            console.log('Character Store - Calling API with:', {
-              page: page,
-              limit: this.pageSize
-            });
-            const response = await starwarsApi.getAllCharacters(page, this.pageSize);
-            this.characters = response.data.map((char): Character => ({
-              ...char,
-              isLiked: false
-            }));
-            this.info = response.info;
-          }
-        }
+        this.characters = response.data.map((char): Character => ({
+          ...char,
+          isLiked: false
+        }));
+        this.info = response.info;
 
         // Set pagination state
-        this.currentPage = this.pageSize === 1000 ? 1 : this.info.page;
-        this.totalPages = this.pageSize === 1000 ? 1 : Math.ceil(this.info.total / this.info.limit);
-        this.hasNextPage = this.pageSize === 1000 ? false : !!this.info.next;
-        this.hasPreviousPage = this.pageSize === 1000 ? false : !!this.info.prev;
+        this.currentPage = this.info.page;
+        this.totalPages = Math.ceil(this.info.total / this.info.limit);
+        this.hasNextPage = !!this.info.next;
+        this.hasPreviousPage = !!this.info.prev;
         this.error = null;
       } catch (error) {
         this.error = 'Failed to fetch characters';
-        console.error('Error fetching characters:', error);
       } finally {
         this.loading = false;
       }
     },
 
     async searchCharacters(query: string) {
-      this.loading = true
-      this.searchQuery = query
-      try {
-        // Fetch all characters first
-        const response = await starwarsApi.getAllCharacters(1, 1000)
-        const normalizedQuery = this.normalizeSearchString(query)
-        const filteredCharacters = response.data.filter(char =>
-          this.normalizeSearchString(char.name).includes(normalizedQuery)
-        )
-
-        // Update pagination info
-        this.info = {
-          total: filteredCharacters.length,
-          page: 1,
-          limit: this.pageSize,
-          next: null,
-          prev: null
-        }
-
-        // Get the first page of filtered results
-        const startIndex = 0
-        const endIndex = this.pageSize
-        this.characters = filteredCharacters
-          .slice(startIndex, endIndex)
-          .map((char): Character => ({
-            ...char,
-            isLiked: false
-          }))
-
-        this.currentPage = 1
-        this.totalPages = Math.ceil(filteredCharacters.length / this.pageSize)
-        this.hasNextPage = filteredCharacters.length > this.pageSize
-        this.hasPreviousPage = false
-        this.error = null
-      } catch (error) {
-        this.error = 'Failed to search characters'
-        console.error('Error searching characters:', error)
-      } finally {
-        this.loading = false
-      }
+      this.searchQuery = query || '';
+      await this.fetchCharacters(1);
     },
 
     nextPage() {
@@ -205,13 +103,6 @@ export const useCharacterStore = defineStore('character', {
     },
     getLikedCharacters: (state) => {
       return state.characters.filter(char => char.isLiked)
-    },
-    filteredCharacters: (state) => {
-      if (!state.searchQuery) return state.characters
-      const normalizedQuery = state.searchQuery.toLowerCase().replace(/[^a-z0-9]/g, '')
-      return state.characters.filter(char =>
-        char.name.toLowerCase().replace(/[^a-z0-9]/g, '').includes(normalizedQuery)
-      )
     }
   }
 })
