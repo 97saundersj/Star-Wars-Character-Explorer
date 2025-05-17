@@ -30,7 +30,9 @@
 
     <CharacterPagination />
 
-    <BSpinner v-if="store.loading" class="text-light my-5" style="width: 3rem; height: 3rem;" />
+    <div v-if="store.loading" class="d-flex justify-content-center align-items-center my-5">
+      <BSpinner class="text-light" style="width: 3rem; height: 3rem;" />
+    </div>
 
     <BAlert v-else-if="store.error" variant="danger" show class="mb-4">
       <i class="bi bi-exclamation-triangle-fill me-2"></i>
@@ -63,12 +65,19 @@
                   </BButton>
                 </div>
               </template>
-              <img
-                :src="character.image"
-                :alt="character.name"
-                class="card-img"
-                loading="lazy"
-              >
+              <div class="image-container position-relative">
+                <div v-if="!imageLoaded[character.name]" class="loading-overlay">
+                  <BSpinner class="text-light" />
+                </div>
+                <img
+                  :src="character.image"
+                  :alt="character.name"
+                  class="card-img"
+                  loading="lazy"
+                  @load="imageLoaded[character.name] = true"
+                  @error="imageLoaded[character.name] = true"
+                >
+              </div>
             </BCard>
           </RouterLink>
         </BCol>
@@ -101,6 +110,7 @@ import {
 const store = useCharacterStore()
 const languageStore = useLanguageStore()
 const searchTimeout = ref<number | null>(null)
+const imageLoaded = ref<Record<string, boolean>>({})
 
 const handleSearch = async (event: Event) => {
   const target = event.target as HTMLInputElement
@@ -222,5 +232,25 @@ onMounted(async () => {
   background-color: #212529;
   border-color: #6c757d;
   opacity: 0.5;
+}
+
+.image-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background-color: #2b3035;
+  overflow: hidden;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
 }
 </style>

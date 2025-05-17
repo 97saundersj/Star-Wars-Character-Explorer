@@ -1,5 +1,6 @@
 using StarWarsCharactersWebAPI.Services.Interfaces;
 using StarWarsCharactersWebAPI.Models;
+using System.Text;
 
 namespace StarWarsCharactersWebAPI.Services
 {
@@ -25,11 +26,23 @@ namespace StarWarsCharactersWebAPI.Services
             if (string.IsNullOrEmpty(search))
                 return characters;
 
+            var normalizedSearch = NormalizeString(search);
             return characters
-                .Where(c => c.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                          (c.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false))
-                .OrderBy(c => !c.Name.Contains(search, StringComparison.OrdinalIgnoreCase))
+                .Where(c => NormalizeString(c.Name).Contains(normalizedSearch) ||
+                          (c.Description != null && NormalizeString(c.Description).Contains(normalizedSearch)))
+                .OrderBy(c => !NormalizeString(c.Name).Contains(normalizedSearch))
                 .ToList();
+        }
+
+        private static string NormalizeString(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return string.Empty;
+
+            return input
+                .ToLowerInvariant()
+                .Replace("-", "")
+                .Replace(" ", "");
         }
 
         private static StarWarsResponse CreatePaginatedResponse(List<StarWarsCharacter> characters, int page, int pageSize)
