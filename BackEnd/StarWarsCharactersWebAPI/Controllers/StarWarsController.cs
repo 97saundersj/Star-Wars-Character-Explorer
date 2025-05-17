@@ -16,12 +16,15 @@ namespace StarWarsCharactersWebAPI.Controllers
         }
 
         [HttpGet("characters")]
-        public async Task<ActionResult<List<StarWarsCharacter>>> GetAllCharacters()
+        public async Task<ActionResult<StarWarsResponse>> GetAllCharacters(
+            [FromQuery] int page = 1,
+            [FromQuery] int? limit = null,
+            [FromQuery] string search = null)
         {
             try
             {
-                var characters = await _starWarsService.GetAllCharactersAsync();
-                return Ok(characters);
+                var response = await _starWarsService.GetAllCharactersAsync(page, limit, search);
+                return Ok(response);
             }
             catch (Exception ex)
             {

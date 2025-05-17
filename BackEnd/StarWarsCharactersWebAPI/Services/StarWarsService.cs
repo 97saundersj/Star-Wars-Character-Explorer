@@ -6,7 +6,7 @@ namespace StarWarsCharactersWebAPI.Services
 {
     public interface IStarWarsService
     {
-        Task<List<StarWarsCharacter>> GetAllCharactersAsync();
+        Task<StarWarsResponse> GetAllCharactersAsync(int page = 1, int? limit = null, string search = null);
         Task<StarWarsCharacter> GetCharacterByIdAsync(string id);
     }
 
@@ -15,7 +15,7 @@ namespace StarWarsCharactersWebAPI.Services
         private readonly HttpClient _httpClient;
         private readonly IMemoryCache _cache;
         private const string BaseUrl = "https://starwars-databank-server.vercel.app/api/v1";
-        private const string CacheKey = "starwars_characters";
+        private const string AllCharactersCacheKey = "all_characters";
 
         public StarWarsService(HttpClient httpClient, IMemoryCache cache)
         {
@@ -23,31 +23,119 @@ namespace StarWarsCharactersWebAPI.Services
             _cache = cache;
         }
 
-        public async Task<List<StarWarsCharacter>> GetAllCharactersAsync()
+        public async Task<StarWarsResponse> GetAllCharactersAsync(int page = 1, int? limit = null, string search = null)
         {
-            if (_cache.TryGetValue(CacheKey, out List<StarWarsCharacter> cachedCharacters))
+            if (!_cache.TryGetValue(AllCharactersCacheKey, out StarWarsResponse allCharacters))
             {
-                return cachedCharacters;
+                // Fetch all pages from the external API
+                var allData = new List<StarWarsCharacter>();
+                int currentPage = 1;
+                int totalPages = 1;
+                StarWarsInfo info = null;
+                do
+                {
+                    var response = await _httpClient.GetAsync($"{BaseUrl}/characters?page={currentPage}");
+                    response.EnsureSuccessStatusCode();
+                    var content = await response.Content.ReadAsStringAsync();
+                    var pageResult = JsonSerializer.Deserialize<StarWarsResponse>(content);
+                    if (pageResult?.data != null)
+                        allData.AddRange(pageResult.data);
+                    info = pageResult?.info;
+                    totalPages = info != null ? (int)Math.Ceiling((double)info.total / info.limit) : 1;
+                    currentPage++;
+                } while (currentPage <= totalPages);
+
+                allCharacters = new StarWarsResponse
+                {
+                    info = new StarWarsInfo
+                    {
+                        total = allData.Count,
+                        page = 1,
+                        limit = allData.Count,
+                        next = null,
+                        prev = null
+                    },
+                    data = allData
+                };
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(15));
+
+                _cache.Set(AllCharactersCacheKey, allCharacters, cacheOptions);
             }
 
-            var response = await _httpClient.GetAsync($"{BaseUrl}/characters");
-            response.EnsureSuccessStatusCode();
+            // Apply search filter if provided
+            var filteredCharacters = allCharacters.data;
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.ToLowerInvariant();
+                filteredCharacters = filteredCharacters
+                    .Where(c => c.name.ToLowerInvariant().Contains(search) || 
+                              (c.description?.ToLowerInvariant().Contains(search) ?? false))
+                    .ToList();
+            }
 
-            var content = await response.Content.ReadAsStringAsync();
-            var result = JsonSerializer.Deserialize<StarWarsResponse>(content);
+            // Calculate pagination
+            var totalItems = filteredCharacters.Count;
+            var pageSize = limit ?? 10;
+            var totalPagesLocal = (int)Math.Ceiling(totalItems / (double)pageSize);
+            page = Math.Max(1, Math.Min(page, totalPagesLocal));
 
-            var cacheOptions = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+            var pagedCharacters = filteredCharacters
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
 
-            _cache.Set(CacheKey, result.data, cacheOptions);
-
-            return result.data;
+            // Create response with pagination info
+            return new StarWarsResponse
+            {
+                info = new StarWarsInfo
+                {
+                    total = totalItems,
+                    page = page,
+                    limit = pageSize,
+                    next = page < totalPagesLocal ? $"/api/StarWars/characters?page={page + 1}&limit={pageSize}" : null,
+                    prev = page > 1 ? $"/api/StarWars/characters?page={page - 1}&limit={pageSize}" : null
+                },
+                data = pagedCharacters
+            };
         }
 
         public async Task<StarWarsCharacter> GetCharacterByIdAsync(string id)
         {
-            var characters = await GetAllCharactersAsync();
-            return characters.FirstOrDefault(c => c._id == id);
+            var cacheKey = $"character_{id}";
+            
+            if (_cache.TryGetValue(cacheKey, out StarWarsCharacter cachedCharacter))
+            {
+                return cachedCharacter;
+            }
+
+            try
+            {
+                var response = await _httpClient.GetAsync($"{BaseUrl}/characters/{id}");
+                
+                // If we get a 500 error from the external API, treat it as a not found
+                if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+                {
+                    return null;
+                }
+                
+                response.EnsureSuccessStatusCode();
+
+                var content = await response.Content.ReadAsStringAsync();
+                var character = JsonSerializer.Deserialize<StarWarsCharacter>(content);
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromHours(1));
+
+                _cache.Set(cacheKey, character, cacheOptions);
+
+                return character;
+            }
+            catch (HttpRequestException)
+            {
+                return null;
+            }
         }
     }
 }
