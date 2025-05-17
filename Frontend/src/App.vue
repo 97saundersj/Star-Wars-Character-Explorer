@@ -3,7 +3,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
       <div class="container">
         <RouterLink class="navbar-brand fw-bold" to="/">
-          <i class="bi bi-stars me-2"></i>Star Wars Character Explorer
+          <i class="bi bi-stars me-2"></i>Star Wars Characters
         </RouterLink>
         <button
           class="navbar-toggler"
@@ -86,6 +86,7 @@ const languageStore = useLanguageStore()
 /* Apply Aurebesh font when language is set to Aurebesh */
 html[data-language="au"] {
   font-family: 'Aurebesh', sans-serif !important;
+  font-size: 0.9em !important;
 }
 
 html[data-language="au"] * {
@@ -95,5 +96,6 @@ html[data-language="au"] * {
 /* Prevent EN button from changing font */
 html[data-language="au"] .btn-group .btn:first-child {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+  font-size: 1em !important;
 }
 </style>

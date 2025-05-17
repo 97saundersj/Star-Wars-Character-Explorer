@@ -21,11 +21,16 @@
       <BRow>
         <BCol md="4" class="mb-3 mb-md-0">
           <div class="character-image-container">
+            <div v-if="!imageLoaded" class="loading-overlay">
+              <BSpinner class="text-light" style="width: 3rem; height: 3rem;" />
+            </div>
             <BImg
               :src="character.image"
               :alt="character.name"
               fluid
               class="character-image rounded"
+              @load="imageLoaded = true"
+              @error="imageLoaded = true"
             />
           </div>
         </BCol>
@@ -124,13 +129,15 @@ import {
   BForm,
   BFormGroup,
   BFormInput,
-  BFormTextarea
+  BFormTextarea,
+  BSpinner
 } from 'bootstrap-vue-next'
 
 const route = useRoute()
 const store = useCharacterStore()
 const languageStore = useLanguageStore()
 const toast = useToast()
+const imageLoaded = ref(false)
 
 const character = computed(() => store.getCharacterByName(route.params.name as string))
 
@@ -275,6 +282,20 @@ const submitReview = async () => {
 .rating-button {
   min-width: 2.5rem;
   padding: 0.25rem 0.5rem;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+  border-radius: 0.375rem;
 }
 </style>
 

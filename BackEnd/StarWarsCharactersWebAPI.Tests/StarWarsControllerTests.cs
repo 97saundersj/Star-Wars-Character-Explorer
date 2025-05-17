@@ -68,6 +68,28 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
     }
 
     [Fact]
+    public async Task GetAllCharacters_WithSpecialCharacters_ReturnsFilteredResults()
+    {
+        // Arrange
+        const string searchTerm = "r2d2";
+
+        // Act
+        var response = await _client.GetAsync($"/api/StarWars/characters?search={searchTerm}");
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonSerializer.Deserialize<StarWarsResponse>(content);
+
+        // Assert
+        response.EnsureSuccessStatusCode();
+        Assert.NotNull(result);
+        Assert.All(result.Data, character =>
+            Assert.True(
+                character.Name.ToLowerInvariant().Replace("-", "").Contains(searchTerm.ToLowerInvariant()) ||
+                (character.Description?.ToLowerInvariant().Replace("-", "").Contains(searchTerm.ToLowerInvariant()) ?? false)
+            )
+        );
+    }
+
+    [Fact]
     public async Task GetCharacterById_WithValidId_ReturnsCharacter()
     {
         // Arrange
