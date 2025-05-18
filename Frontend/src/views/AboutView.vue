@@ -6,7 +6,7 @@
 
     <div class="text-center">
       <v-btn
-        href="https://github.com/97saundersj/Vue-Test"
+        href="https://github.com/97saundersj/Star-Wars-Character-Explorer"
         target="_blank"
         rel="noopener noreferrer"
         variant="outlined"
