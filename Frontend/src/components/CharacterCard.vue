@@ -1,9 +1,9 @@
 <template>
   <RouterLink
     :to="{ name: 'character-detail', params: { name: character.name } }"
-    class="text-decoration-none d-block"
+    class="text-decoration-none d-block character-card-link"
   >
-    <BCard class="bg-dark text-light border-secondary h-100 transition-transform">
+    <BCard class="bg-dark text-light border-secondary h-100 hover-effect">
       <template #header>
         <div class="d-flex justify-content-between align-items-center">
           <h6 class="card-title mb-0 text-truncate fw-medium">{{ character.name }}</h6>
@@ -18,7 +18,7 @@
         </div>
       </template>
 
-      <div class="position-relative" style="aspect-ratio: 16/9">
+      <div class="image-container position-relative">
         <div
           v-if="!imageLoaded"
           class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50"
@@ -29,7 +29,7 @@
         <img
           :src="character.image"
           :alt="character.name"
-          class="w-100 h-100 object-fit-cover"
+          class="card-img w-100"
           loading="lazy"
           @load="imageLoaded = true"
           @error="imageLoaded = true"
@@ -59,21 +59,14 @@ const imageLoaded = ref(false)
 <style scoped>
 :deep(.card-body) {
   padding: 0;
+  flex: 1;
+  display: flex;
+  overflow: hidden;
 }
 
-.transition-transform {
-  transition: transform 0.3s ease;
-}
-
-.transition-transform:hover {
-  transform: translateY(-2px);
-}
-
-.transition-transform:hover img {
-  transform: scale(1.05);
-}
-
-img {
-  transition: transform 0.3s ease;
+.image-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
 }
 </style>

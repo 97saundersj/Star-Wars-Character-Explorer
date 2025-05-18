@@ -1,7 +1,11 @@
 @import './base.css';
 
+:root {
+  --bg-dark: #212529;
+}
+
 body {
-  background-color: #212529;
+  background-color: var(--bg-dark);
   color: #e9ecef;
   margin: 0;
   padding: 0;
@@ -14,7 +18,7 @@ body {
   margin: 0;
   padding: 0;
   font-weight: normal;
-  background-color: #212529;
+  background-color: var(--bg-dark);
 }
 
 a,
@@ -35,12 +39,52 @@ a,
   body {
     display: flex;
     place-items: center;
-    background-color: #212529;
+    background-color: var(--bg-dark);
   }
 
   #app {
     display: block;
     padding: 0;
-    background-color: #212529;
+    background-color: var(--bg-dark);
+  }
+}
+
+/* Character image styles */
+.character-image {
+  max-height: 600px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.character-image:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}
+
+.card-img {
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  object-position: top;
+  transition: transform 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
+.hover-effect {
+  transition: transform 0.3s ease;
+}
+
+.hover-effect:hover {
+  transform: translateY(-2px);
+}
+
+.hover-effect:hover img {
+  transform: scale(1.05);
+}
+
+/* Remove unwanted hover background */
+@media (hover: hover) {
+  .character-card-link:hover {
+    background-color: transparent !important;
   }
 }

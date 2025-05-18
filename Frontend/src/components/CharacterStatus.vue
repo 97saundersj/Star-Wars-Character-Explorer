@@ -3,11 +3,6 @@
     <BSpinner class="text-light" style="width: 3rem; height: 3rem" />
   </div>
 
-  <BAlert v-else-if="error" variant="danger" show class="mb-4">
-    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-    {{ languageStore.t('error') }}
-  </BAlert>
-
   <BAlert v-else-if="characters.length === 0" variant="dark" show class="mb-4">
     <i class="bi bi-info-circle-fill me-2"></i>
     {{ languageStore.t('noResults') }}
@@ -20,7 +15,6 @@ import { BSpinner, BAlert } from 'bootstrap-vue-next'
 
 defineProps<{
   loading: boolean
-  error: string | null
   characters: Array<{ name: string }>
 }>()
 

@@ -51,16 +51,4 @@ const clearSearch = async () => {
 </script>
 
 <style scoped>
-::placeholder {
-  color: #6c757d !important;
-  opacity: 1;
-}
-
-:-ms-input-placeholder {
-  color: #6c757d !important;
-}
-
-::-ms-input-placeholder {
-  color: #6c757d !important;
-}
 </style>
