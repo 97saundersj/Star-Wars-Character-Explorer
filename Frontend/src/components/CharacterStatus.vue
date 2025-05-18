@@ -1,17 +1,21 @@
 <template>
-  <div v-if="loading" class="d-flex justify-content-center align-items-center my-5">
-    <BSpinner class="text-light" style="width: 3rem; height: 3rem" />
+  <div v-if="loading" class="d-flex justify-center align-center my-5">
+    <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
   </div>
 
-  <BAlert v-else-if="characters.length === 0" variant="dark" show class="mb-4">
-    <i class="bi bi-info-circle-fill me-2"></i>
+  <v-alert
+    v-else-if="characters.length === 0"
+    type="info"
+    variant="tonal"
+    class="mb-4"
+  >
+    <v-icon start icon="mdi-information" class="me-2"></v-icon>
     {{ languageStore.t('noResults') }}
-  </BAlert>
+  </v-alert>
 </template>
 
 <script setup lang="ts">
 import { useLanguageStore } from '@/stores/languageStore'
-import { BSpinner, BAlert } from 'bootstrap-vue-next'
 
 defineProps<{
   loading: boolean

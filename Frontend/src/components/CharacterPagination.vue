@@ -1,49 +1,47 @@
 <template>
-  <BRow
-    class="align-items-center justify-content-center"
+  <v-row
+    class="align-center justify-center"
     :class="{ 'mt-4': isBottom, 'mb-3': true }"
   >
-    <BCol cols="12" sm="auto" class="mb-2 mb-sm-0 d-flex align-items-center">
-      <BFormGroup class="d-flex align-items-center justify-content-center mb-0">
-        <label :for="pageSizeId" class="me-2 fw-medium mb-0"
-          >{{ languageStore.t('displayLimit') }}:</label
-        >
-        <BFormSelect
-          :id="pageSizeId"
-          class="bg-dark border-secondary w-auto"
+    <v-col cols="12" sm="auto" class="mb-2 mb-sm-0 d-flex align-center">
+      <div class="d-flex align-center justify-center">
+        <span class="me-2 font-weight-medium">{{ languageStore.t('displayLimit') }}:</span>
+        <v-select
           v-model="store.pageSize"
-          @change="handlePageSizeChange"
-          :options="[
-            { value: '12', text: '12' },
-            { value: '24', text: '24' },
-            { value: '48', text: '48' },
-            { value: '96', text: '96' },
-            { value: '1000', text: '1000' },
+          :items="[
+            { title: '12', value: '12' },
+            { title: '24', value: '24' },
+            { title: '48', value: '48' },
+            { title: '96', value: '96' },
+            { title: '1000', value: '1000' },
           ]"
-        />
-      </BFormGroup>
-    </BCol>
-    <BCol cols="12" sm="auto" class="d-flex align-items-center">
-      <BPagination
+          item-title="title"
+          item-value="value"
+          density="compact"
+          variant="outlined"
+          hide-details
+          class="w-auto"
+          @update:model-value="handlePageSizeChange"
+        ></v-select>
+      </div>
+    </v-col>
+    <v-col cols="12" sm="auto" class="d-flex align-center">
+      <v-pagination
         v-if="store.pageSize !== 1000"
         v-model="store.currentPage"
-        :total-rows="store.totalPages"
-        :per-page="1"
-        align="center"
+        :length="store.totalPages"
+        :total-visible="5"
         @update:model-value="(page) => store.fetchCharacters(Number(page))"
-        size="md"
-        class="d-flex flex-wrap justify-content-center gap-1 mb-0"
-        dark
-      >
-      </BPagination>
-    </BCol>
-  </BRow>
+        density="compact"
+        class="d-flex flex-wrap justify-center gap-1 mb-0"
+      ></v-pagination>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup lang="ts">
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
-import { BRow, BCol, BFormGroup, BFormSelect, BPagination } from 'bootstrap-vue-next'
 
 const props = defineProps<{
   isBottom?: boolean

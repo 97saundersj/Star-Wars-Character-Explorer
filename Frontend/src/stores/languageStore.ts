@@ -54,6 +54,7 @@ const translations = {
     displayLimit: 'Results',
     showAll: 'All',
     results: 'results',
+    language: 'Language',
   },
   au: {
     appTitle: 'Characters',
@@ -102,6 +103,7 @@ const translations = {
     displayLimit: 'Results',
     showAll: 'All',
     results: 'results',
+    language: 'Language',
   },
 }
 
