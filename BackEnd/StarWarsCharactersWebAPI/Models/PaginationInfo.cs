@@ -2,21 +2,21 @@ using System.Text.Json.Serialization;
 
 namespace StarWarsCharactersWebAPI.Models
 {
-    public class PaginationInfo(int total, int page, int limit, string? next = null, string? prev = null)
+    public class PaginationInfo(int total, int page, int limit)
     {
         [JsonPropertyName("total")]
-        public int Total { get; set; } = total;
+        public int Total { get; } = total;
 
         [JsonPropertyName("page")]
-        public int Page { get; set; } = page;
+        public int Page { get; } = page;
 
         [JsonPropertyName("limit")]
-        public int Limit { get; set; } = limit;
+        public int Limit { get; } = limit;
 
-        [JsonPropertyName("next")]
-        public string? Next { get; set; } = next;
+        [JsonPropertyName("hasNext")]
+        public bool HasNext => Page < (int)Math.Ceiling(Total / (double)Limit);
 
-        [JsonPropertyName("prev")]
-        public string? Prev { get; set; } = prev;
+        [JsonPropertyName("hasPrevious")]
+        public bool HasPrevious => Page > 1;
     }
 }

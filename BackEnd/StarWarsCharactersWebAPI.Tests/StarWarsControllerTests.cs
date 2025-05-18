@@ -138,7 +138,7 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         response.EnsureSuccessStatusCode();
         Assert.NotNull(result);
         Assert.Equal(result.Info.Total, result.Data.Count);
-        Assert.Null(result.Info.Next); // Should be no next page
+        Assert.False(result.Info.HasNext); // Should be no next page
     }
 
     [Fact]
@@ -158,6 +158,6 @@ public class StarWarsControllerTests : IClassFixture<WebApplicationFactory<Progr
         Assert.NotNull(result);
         Assert.Equal(page, result.Info.Page);
         Assert.Equal(limit, result.Info.Limit);
-        Assert.NotNull(result.Info.Prev); // Should have previous page
+        Assert.True(result.Info.HasPrevious); // Should have previous page
     }
 }
