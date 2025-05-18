@@ -28,15 +28,15 @@ const translations = {
     formerAffiliations: 'Former Affiliations',
     wikiLink: 'Wiki Page',
     viewDetails: 'View Details',
-    writeReview: 'Write a Review',
+    writeReview: 'Write a Character Review',
     yourName: 'Your Name',
-    dateWatched: 'Date Watched',
-    reviewDetails: 'Review Details',
+    dateWatched: 'When did you last watch this character?',
+    reviewDetails: 'Character Review',
     rating: 'Rating',
     submitReview: 'Submit Review',
     reviews: 'Reviews',
-    watchedOn: 'Watched on',
-    reviewedBy: 'Reviewed by',
+    watchedOn: 'Watched On',
+    reviewedBy: 'Reviewed By',
     backToCharacters: 'Back',
     loading: 'Loading...',
     error: 'Failed to fetch characters',
@@ -53,7 +53,7 @@ const translations = {
     noReviews: 'No reviews yet',
     displayLimit: 'Results',
     showAll: 'All',
-    results: 'results'
+    results: 'results',
   },
   au: {
     appTitle: 'Characters',
@@ -76,10 +76,10 @@ const translations = {
     formerAffiliations: 'Former Affiliations',
     wikiLink: 'Wiki Page',
     viewDetails: 'View Details',
-    writeReview: 'Write Review',
+    writeReview: 'Write a Character Review',
     yourName: 'Your Name',
-    dateWatched: 'Date Watched',
-    reviewDetails: 'Review Details',
+    dateWatched: 'When did you last watch this character?',
+    reviewDetails: 'Character Review',
     rating: 'Rating',
     submitReview: 'Submit Review',
     reviews: 'Reviews',
@@ -101,25 +101,25 @@ const translations = {
     noReviews: 'No reviews yet',
     displayLimit: 'Results',
     showAll: 'All',
-    results: 'results'
-  }
+    results: 'results',
+  },
 }
 
 export const useLanguageStore = defineStore('language', {
   state: (): LanguageState => ({
-    currentLanguage: 'en'
+    currentLanguage: 'en',
   }),
 
   actions: {
     setLanguage(language: Language) {
       this.currentLanguage = language
       document.documentElement.setAttribute('data-language', language)
-    }
+    },
   },
 
   getters: {
     t: (state) => (key: keyof typeof translations.en) => {
       return translations[state.currentLanguage][key]
-    }
-  }
+    },
+  },
 })

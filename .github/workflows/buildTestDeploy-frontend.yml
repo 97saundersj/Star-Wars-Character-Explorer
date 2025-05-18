@@ -19,6 +19,27 @@ jobs:
         with:
           submodules: true
           lfs: false
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Install dependencies
+        run: |
+          cd Frontend
+          npm install
+          
+      - name: Format code
+        run: |
+          cd Frontend
+          npm run format
+          
+      - name: Run linting
+        run: |
+          cd Frontend
+          npm run lint
+          
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1

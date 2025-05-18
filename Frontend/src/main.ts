@@ -21,8 +21,8 @@ const vuetify = createVuetify({
   components,
   directives,
   theme: {
-    defaultTheme: 'light'
-  }
+    defaultTheme: 'light',
+  },
 })
 
 const app = createApp(App)
@@ -33,7 +33,7 @@ app.use(vuetify)
 app.use(Toast, {
   transition: 'Vue-Toastification__bounce',
   maxToasts: 3,
-  newestOnTop: true
+  newestOnTop: true,
 })
 
 app.mount('#app')
