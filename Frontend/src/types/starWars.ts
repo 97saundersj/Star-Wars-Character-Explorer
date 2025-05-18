@@ -39,4 +39,5 @@ export interface CharacterState {
   searchQuery: string
   pageSize: number
   info: Info
+  likedCharacterIds: string[]
 }

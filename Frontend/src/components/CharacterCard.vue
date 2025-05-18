@@ -10,11 +10,11 @@
           variant="text"
           color="error"
           class="p-0"
-          @click.prevent="store.toggleLike(character.name)"
+          @click.prevent="store.toggleLike(character._id)"
         >
           <v-icon
             :icon="character.isLiked ? 'mdi-heart' : 'mdi-heart-outline'"
-            size="small"
+            size="large"
           ></v-icon>
         </v-btn>
       </v-card-title>
@@ -51,6 +51,7 @@ defineProps<{
     name: string
     image: string
     isLiked: boolean
+    _id: string
   }
 }>()
 

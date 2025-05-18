@@ -1,7 +1,7 @@
 <template>
-  <v-container class="py-4">
+  <v-container class="py-4" data-testid="mock-character-list">
     <div class="mb-5">
-      <h1 class="text-h3 font-weight-bold mb-3">{{ languageStore.t('appTitle') }}</h1>
+      <h1 class="text-h3 font-weight-bold mb-3">{{ languageStore.t('characters') }}</h1>
     </div>
 
     <CharacterSearch />

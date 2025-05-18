@@ -20,6 +20,7 @@ export const useCharacterStore = defineStore('character', {
       hasNext: false,
       hasPrevious: false,
     },
+    likedCharacterIds: JSON.parse(localStorage.getItem('likedCharacters') || '[]'),
   }),
 
   actions: {
@@ -32,7 +33,7 @@ export const useCharacterStore = defineStore('character', {
         this.characters = response.data.map(
           (char): Character => ({
             ...char,
-            isLiked: false,
+            isLiked: this.likedCharacterIds.includes(char._id),
           }),
         )
         this.info = response.info
@@ -66,10 +67,21 @@ export const useCharacterStore = defineStore('character', {
       }
     },
 
-    toggleLike(characterName: string) {
-      const character = this.characters.find((char) => char.name === characterName)
+    toggleLike(characterId: string) {
+      const character = this.characters.find((char) => char._id === characterId)
       if (character) {
         character.isLiked = !character.isLiked
+
+        if (character.isLiked) {
+          if (!this.likedCharacterIds.includes(characterId)) {
+            this.likedCharacterIds.push(characterId)
+          }
+        } else {
+          this.likedCharacterIds = this.likedCharacterIds.filter(id => id !== characterId)
+        }
+
+        // Save to localStorage
+        localStorage.setItem('likedCharacters', JSON.stringify(this.likedCharacterIds))
       }
     },
 
