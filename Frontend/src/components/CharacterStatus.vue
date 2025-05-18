@@ -1,6 +1,6 @@
 <template>
   <div v-if="loading" class="d-flex justify-content-center align-items-center my-5">
-    <BSpinner class="text-light" style="width: 3rem; height: 3rem;" />
+    <BSpinner class="text-light" style="width: 3rem; height: 3rem" />
   </div>
 
   <BAlert v-else-if="error" variant="danger" show class="mb-4">

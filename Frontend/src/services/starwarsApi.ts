@@ -1,28 +1,32 @@
-import type { StarWarsCharacter, Info, CharacterReview } from '@/types/starWars';
-import axios from 'axios';
+import type { StarWarsCharacter, Info, CharacterReview } from '@/types/starWars'
+import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL;
+const BASE_URL = import.meta.env.VITE_API_URL
 
 export const starwarsApi = {
-  async getAllCharacters(page: number = 1, limit?: number, search?: string): Promise<{ info: Info; data: StarWarsCharacter[] }> {
+  async getAllCharacters(
+    page: number = 1,
+    limit?: number,
+    search?: string,
+  ): Promise<{ info: Info; data: StarWarsCharacter[] }> {
     try {
-      const searchParam = search ? `&search=${encodeURIComponent(search)}` : '';
-      const limitParam = limit && limit > 0 ? `&limit=${limit}` : '';
-      const url = `${BASE_URL}/characters?page=${page}${limitParam}${searchParam}`;
+      const searchParam = search ? `&search=${encodeURIComponent(search)}` : ''
+      const limitParam = limit && limit > 0 ? `&limit=${limit}` : ''
+      const url = `${BASE_URL}/characters?page=${page}${limitParam}${searchParam}`
 
-      const response = await axios.get(url);
-      return response.data;
+      const response = await axios.get(url)
+      return response.data
     } catch (error) {
-      throw new Error('Failed to fetch characters');
+      throw new Error('Failed to fetch characters')
     }
   },
 
   async getCharacterById(id: string): Promise<StarWarsCharacter> {
     try {
-      const response = await axios.get(`${BASE_URL}/characters/${id}`);
-      return response.data;
+      const response = await axios.get(`${BASE_URL}/characters/${id}`)
+      return response.data
     } catch (error) {
-      throw new Error('Failed to fetch character');
+      throw new Error('Failed to fetch character')
     }
   },
 
@@ -32,9 +36,9 @@ export const starwarsApi = {
         headers: {
           'Content-Type': 'application/json',
         },
-      });
+      })
     } catch (error) {
-      throw new Error('Failed to submit review');
+      throw new Error('Failed to submit review')
     }
-  }
-};
+  },
+}

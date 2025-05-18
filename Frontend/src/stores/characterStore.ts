@@ -18,42 +18,40 @@ export const useCharacterStore = defineStore('character', {
       page: 1,
       limit: 24,
       hasNext: false,
-      hasPrevious: false
-    }
+      hasPrevious: false,
+    },
   }),
 
   actions: {
     async fetchCharacters(page: number = 1) {
       this.loading = true
       try {
-        const search = typeof this.searchQuery === 'string' ? this.searchQuery : '';
-        const response = await starwarsApi.getAllCharacters(
-          page,
-          this.pageSize,
-          search
-        );
+        const search = typeof this.searchQuery === 'string' ? this.searchQuery : ''
+        const response = await starwarsApi.getAllCharacters(page, this.pageSize, search)
 
-        this.characters = response.data.map((char): Character => ({
-          ...char,
-          isLiked: false
-        }));
-        this.info = response.info;
+        this.characters = response.data.map(
+          (char): Character => ({
+            ...char,
+            isLiked: false,
+          }),
+        )
+        this.info = response.info
 
         // Set pagination state
-        this.currentPage = this.info.page;
-        this.totalPages = Math.ceil(this.info.total / this.info.limit);
-        this.hasNextPage = this.info.hasNext;
-        this.hasPreviousPage = this.info.hasPrevious;
+        this.currentPage = this.info.page
+        this.totalPages = Math.ceil(this.info.total / this.info.limit)
+        this.hasNextPage = this.info.hasNext
+        this.hasPreviousPage = this.info.hasPrevious
       } catch {
-        throw new Error();
+        throw new Error()
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
 
     async searchCharacters(query: string) {
-      this.searchQuery = query || '';
-      await this.fetchCharacters(1);
+      this.searchQuery = query || ''
+      await this.fetchCharacters(1)
     },
 
     nextPage() {
@@ -69,7 +67,7 @@ export const useCharacterStore = defineStore('character', {
     },
 
     toggleLike(characterName: string) {
-      const character = this.characters.find(char => char.name === characterName)
+      const character = this.characters.find((char) => char.name === characterName)
       if (character) {
         character.isLiked = !character.isLiked
       }
@@ -77,19 +75,19 @@ export const useCharacterStore = defineStore('character', {
 
     async submitReview(review: CharacterReview) {
       try {
-        await starwarsApi.submitReview(review);
+        await starwarsApi.submitReview(review)
       } catch {
-        throw new Error();
+        throw new Error()
       }
-    }
+    },
   },
 
   getters: {
     getCharacterByName: (state) => (name: string) => {
-      return state.characters.find(char => char.name === name)
+      return state.characters.find((char) => char.name === name)
     },
     getLikedCharacters: (state) => {
-      return state.characters.filter(char => char.isLiked)
-    }
-  }
+      return state.characters.filter((char) => char.isLiked)
+    },
+  },
 })

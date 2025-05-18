@@ -1,10 +1,9 @@
 <template>
   <RouterLink
-    :to="{ name: 'character-detail', params: { name: character.name }}"
+    :to="{ name: 'character-detail', params: { name: character.name } }"
     class="text-decoration-none d-block"
   >
     <BCard class="bg-dark text-light border-secondary h-100 transition-transform">
-
       <template #header>
         <div class="d-flex justify-content-between align-items-center">
           <h6 class="card-title mb-0 text-truncate fw-medium">{{ character.name }}</h6>
@@ -19,8 +18,11 @@
         </div>
       </template>
 
-      <div class="position-relative" style="aspect-ratio: 16/9;">
-        <div v-if="!imageLoaded" class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50">
+      <div class="position-relative" style="aspect-ratio: 16/9">
+        <div
+          v-if="!imageLoaded"
+          class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center bg-dark bg-opacity-50"
+        >
           <BSpinner class="text-light" />
         </div>
 
@@ -31,10 +33,9 @@
           loading="lazy"
           @load="imageLoaded = true"
           @error="imageLoaded = true"
-        >
+        />
       </div>
     </BCard>
-
   </RouterLink>
 </template>
 

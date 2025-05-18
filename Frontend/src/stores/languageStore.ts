@@ -53,7 +53,7 @@ const translations = {
     noReviews: 'No reviews yet',
     displayLimit: 'Results',
     showAll: 'All',
-    results: 'results'
+    results: 'results',
   },
   au: {
     appTitle: 'Characters',
@@ -101,25 +101,25 @@ const translations = {
     noReviews: 'No reviews yet',
     displayLimit: 'Results',
     showAll: 'All',
-    results: 'results'
-  }
+    results: 'results',
+  },
 }
 
 export const useLanguageStore = defineStore('language', {
   state: (): LanguageState => ({
-    currentLanguage: 'en'
+    currentLanguage: 'en',
   }),
 
   actions: {
     setLanguage(language: Language) {
       this.currentLanguage = language
       document.documentElement.setAttribute('data-language', language)
-    }
+    },
   },
 
   getters: {
     t: (state) => (key: keyof typeof translations.en) => {
       return translations[state.currentLanguage][key]
-    }
-  }
+    },
+  },
 })

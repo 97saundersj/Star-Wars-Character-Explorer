@@ -1,20 +1,11 @@
 <template>
   <div v-if="character">
-    <BButton
-      variant="outline-light"
-      class="mb-4"
-      :to="{ name: 'star-wars' }"
-    >
+    <BButton variant="outline-light" class="mb-4" :to="{ name: 'star-wars' }">
       <i class="bi bi-arrow-left me-2"></i>
       {{ languageStore.t('backToCharacters') }}
     </BButton>
 
-    <BCard
-      bg-variant="dark"
-      text-variant="light"
-      border-variant="secondary"
-      class="mb-4"
-    >
+    <BCard bg-variant="dark" text-variant="light" border-variant="secondary" class="mb-4">
       <template #header>
         <h2 class="card-title mb-0">{{ character.name }}</h2>
       </template>
@@ -22,7 +13,7 @@
         <BCol md="4" class="mb-3 mb-md-0">
           <div class="character-image-container">
             <div v-if="!imageLoaded" class="loading-overlay">
-              <BSpinner class="text-light" style="width: 3rem; height: 3rem;" />
+              <BSpinner class="text-light" style="width: 3rem; height: 3rem" />
             </div>
             <BImg
               :src="character.image"
@@ -41,20 +32,12 @@
     </BCard>
 
     <!-- Review Form -->
-    <BCard
-      bg-variant="dark"
-      text-variant="light"
-      border-variant="secondary"
-      class="mb-4"
-    >
+    <BCard bg-variant="dark" text-variant="light" border-variant="secondary" class="mb-4">
       <template #header>
         <h3 class="card-title mb-0">{{ languageStore.t('writeReview') }}</h3>
       </template>
       <BForm @submit.prevent="submitReview">
-        <BFormGroup
-          :label="languageStore.t('yourName')"
-          label-for="reviewerName"
-        >
+        <BFormGroup :label="languageStore.t('yourName')" label-for="reviewerName">
           <BFormInput
             id="reviewerName"
             v-model="reviewForm.reviewerName"
@@ -64,10 +47,7 @@
             border-variant="secondary"
           />
         </BFormGroup>
-        <BFormGroup
-          :label="languageStore.t('dateWatched')"
-          label-for="watchDate"
-        >
+        <BFormGroup :label="languageStore.t('dateWatched')" label-for="watchDate">
           <BFormInput
             id="watchDate"
             type="date"
@@ -78,10 +58,7 @@
             border-variant="secondary"
           />
         </BFormGroup>
-        <BFormGroup
-          :label="languageStore.t('reviewDetails')"
-          label-for="reviewDetails"
-        >
+        <BFormGroup :label="languageStore.t('reviewDetails')" label-for="reviewDetails">
           <BFormTextarea
             id="reviewDetails"
             v-model="reviewForm.reviewDetails"
@@ -130,7 +107,7 @@ import {
   BFormGroup,
   BFormInput,
   BFormTextarea,
-  BSpinner
+  BSpinner,
 } from 'bootstrap-vue-next'
 
 const route = useRoute()
@@ -151,7 +128,7 @@ const reviewForm = ref({
   reviewerName: '',
   watchDate: '',
   reviewDetails: '',
-  rating: 0
+  rating: 0,
 })
 
 const submitReview = async () => {
@@ -161,18 +138,18 @@ const submitReview = async () => {
       reviewerName: reviewForm.value.reviewerName,
       watchDate: reviewForm.value.watchDate,
       reviewDetails: reviewForm.value.reviewDetails,
-      rating: reviewForm.value.rating
+      rating: reviewForm.value.rating,
     })
     // Reset form
     reviewForm.value = {
       reviewerName: '',
       watchDate: '',
       reviewDetails: '',
-      rating: 0
+      rating: 0,
     }
-    toast.success("May the Force be review!")
+    toast.success('May the Force be review!')
   } catch {
-    toast.error("Error creating review.\nI have a bad feeling about this...")
+    toast.error('Error creating review.\nI have a bad feeling about this...')
   }
 }
 </script>
@@ -298,4 +275,3 @@ const submitReview = async () => {
   border-radius: 0.375rem;
 }
 </style>
-

@@ -20,8 +20,5 @@
 </template>
 
 <script setup lang="ts">
-import {
-  BContainer,
-  BButton
-} from 'bootstrap-vue-next'
+import { BContainer, BButton } from 'bootstrap-vue-next'
 </script>

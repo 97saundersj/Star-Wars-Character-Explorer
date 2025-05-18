@@ -8,11 +8,7 @@
 
     <CharacterPagination />
 
-    <CharacterStatus
-      :loading="store.loading"
-      :error="store.error"
-      :characters="store.characters"
-    />
+    <CharacterStatus :loading="store.loading" :error="store.error" :characters="store.characters" />
 
     <BRow v-if="!store.loading && !store.error && store.characters.length > 0" class="g-4">
       <BCol v-for="character in store.characters" :key="character.name" cols="6" md="4" lg="3">

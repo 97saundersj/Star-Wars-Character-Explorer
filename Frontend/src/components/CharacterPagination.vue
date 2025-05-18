@@ -1,12 +1,17 @@
 <template>
-  <BRow class="align-items-center justify-content-center" :class="{ 'mt-4': isBottom, 'mb-3': true }">
+  <BRow
+    class="align-items-center justify-content-center"
+    :class="{ 'mt-4': isBottom, 'mb-3': true }"
+  >
     <BCol cols="12" sm="auto" class="mb-2 mb-sm-0">
       <BFormGroup class="d-flex align-items-center justify-content-center mb-0">
-        <label :for="pageSizeId" class="text-light me-2 fw-medium">{{ languageStore.t('displayLimit') }}:</label>
+        <label :for="pageSizeId" class="text-light me-2 fw-medium"
+          >{{ languageStore.t('displayLimit') }}:</label
+        >
         <BFormSelect
           :id="pageSizeId"
           class="bg-dark text-light border-secondary"
-          style="width: auto; min-width: 80px;"
+          style="width: auto; min-width: 80px"
           v-model="store.pageSize"
           @change="handlePageSizeChange"
           :options="[
@@ -14,7 +19,7 @@
             { value: '24', text: '24' },
             { value: '48', text: '48' },
             { value: '96', text: '96' },
-            { value: '1000', text: languageStore.t('showAll') }
+            { value: '1000', text: languageStore.t('showAll') },
           ]"
         />
       </BFormGroup>
@@ -50,13 +55,7 @@
 <script setup lang="ts">
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
-import {
-  BRow,
-  BCol,
-  BFormGroup,
-  BFormSelect,
-  BPagination
-} from 'bootstrap-vue-next'
+import { BRow, BCol, BFormGroup, BFormSelect, BPagination } from 'bootstrap-vue-next'
 
 const props = defineProps<{
   isBottom?: boolean

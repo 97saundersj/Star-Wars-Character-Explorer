@@ -30,6 +30,11 @@ jobs:
           cd Frontend
           npm install
           
+      - name: Format code
+        run: |
+          cd Frontend
+          npm run format
+          
       - name: Run linting
         run: |
           cd Frontend

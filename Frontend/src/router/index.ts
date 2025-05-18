@@ -8,24 +8,24 @@ const router = createRouter({
     {
       path: '/',
       name: 'star-wars',
-      component: CharacterList
+      component: CharacterList,
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue')
+      component: () => import('../views/AboutView.vue'),
     },
     {
       path: '/character/:name',
       name: 'character-detail',
       component: CharacterDetail,
-      props: true
+      props: true,
     },
     {
       path: '/:pathMatch(.*)*',
-      redirect: { name: 'star-wars' }
-    }
-  ]
+      redirect: { name: 'star-wars' },
+    },
+  ],
 })
 
 export default router

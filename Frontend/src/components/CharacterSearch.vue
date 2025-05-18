@@ -28,13 +28,7 @@
 import { ref } from 'vue'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
-import {
-  BFormGroup,
-  BInputGroup,
-  BInputGroupText,
-  BFormInput,
-  BButton
-} from 'bootstrap-vue-next'
+import { BFormGroup, BInputGroup, BInputGroupText, BFormInput, BButton } from 'bootstrap-vue-next'
 
 const store = useCharacterStore()
 const languageStore = useLanguageStore()
