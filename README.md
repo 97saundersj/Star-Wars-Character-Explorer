@@ -10,7 +10,7 @@ This repository hosts the Front End and Back End code for a web application that
 - (Attempt to) Submit reviews for characters
 - Support for both English and Aurebesh language options
 
-## Frontend [![Build & deploy Frontend](https://github.com/97saundersj/Vue-Test/actions/workflows/frontend-deploy.yml/badge.svg)](https://github.com/97saundersj/Vue-Test/actions)
+## Frontend [![Build & deploy Frontend](https://github.com/97saundersj/Star-Wars-Character-Explorer/actions/workflows/buildTestDeploy-frontend.yml/badge.svg)](https://github.com/97saundersj/Star-Wars-Character-Explorer/actions/workflows/buildTestDeploy-frontend.yml)
 
 [Vue Web App](https://salmon-glacier-0858cd303.6.azurestaticapps.net/)
 
@@ -39,7 +39,7 @@ This repository hosts the Front End and Back End code for a web application that
    npm run test:unit
    ```
 
-## Backend [![Build & deploy Backend](https://github.com/97saundersj/Vue-Test/actions/workflows/backend-deploy.yml/badge.svg)](https://github.com/97saundersj/Vue-Test/actions)
+## Backend [![Build & deploy Backend](https://github.com/97saundersj/Star-Wars-Character-Explorer/actions/workflows/buildTestDeploy-backend.yml/badge.svg)](https://github.com/97saundersj/Star-Wars-Character-Explorer/actions/workflows/buildTestDeploy-backend.yml)
 
 [Web API Swagger Page](https://starwarsapi-hxcqbxddd4hhacaq.ukwest-01.azurewebsites.net/swagger/index.html)
 
