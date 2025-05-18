@@ -1,24 +1,25 @@
 <template>
-  <BContainer class="py-4">
+  <v-container class="py-4">
     <div class="mb-5">
-      <h1 class="text-light display-4 fw-bold mb-3">About</h1>
+      <h1 class="text-h3 font-weight-bold mb-3">About</h1>
     </div>
 
     <div class="text-center">
-      <BButton
+      <v-btn
         href="https://github.com/97saundersj/Vue-Test"
         target="_blank"
         rel="noopener noreferrer"
-        variant="outline-secondary"
-        class="text-light border-secondary"
-        size="lg"
+        variant="outlined"
+        color="primary"
+        size="large"
       >
-        <i class="bi bi-github me-2"></i>Check out the project on GitHub
-      </BButton>
+        <v-icon start icon="mdi-github" class="me-2"></v-icon>
+        Check out the project on GitHub
+      </v-btn>
     </div>
-  </BContainer>
+  </v-container>
 </template>
 
 <script setup lang="ts">
-import { BContainer, BButton } from 'bootstrap-vue-next'
+// No imports needed for Vuetify components
 </script>

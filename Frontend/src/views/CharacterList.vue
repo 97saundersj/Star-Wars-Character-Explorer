@@ -1,7 +1,7 @@
 <template>
-  <BContainer class="py-4">
+  <v-container class="py-4">
     <div class="mb-5">
-      <h1 class="display-4 fw-bold mb-3">{{ languageStore.t('appTitle') }}</h1>
+      <h1 class="text-h3 font-weight-bold mb-3">{{ languageStore.t('appTitle') }}</h1>
     </div>
 
     <CharacterSearch />
@@ -10,14 +10,14 @@
 
     <CharacterStatus :loading="store.loading" :characters="store.characters" />
 
-    <BRow v-if="!store.loading && store.characters.length > 0" class="g-4">
-      <BCol v-for="character in store.characters" :key="character.name" cols="6" md="4" lg="3">
+    <v-row v-if="!store.loading && store.characters.length > 0" class="g-4">
+      <v-col v-for="character in store.characters" :key="character.name" cols="6" md="4" lg="3">
         <CharacterCard :character="character" />
-      </BCol>
-    </BRow>
+      </v-col>
+    </v-row>
 
     <CharacterPagination :is-bottom="true" />
-  </BContainer>
+  </v-container>
 </template>
 
 <script setup lang="ts">
@@ -29,7 +29,6 @@ import CharacterPagination from '@/components/CharacterPagination.vue'
 import CharacterSearch from '@/components/CharacterSearch.vue'
 import CharacterCard from '@/components/CharacterCard.vue'
 import CharacterStatus from '@/components/CharacterStatus.vue'
-import { BContainer, BRow, BCol } from 'bootstrap-vue-next'
 
 const store = useCharacterStore()
 const languageStore = useLanguageStore()

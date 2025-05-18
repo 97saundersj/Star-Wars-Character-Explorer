@@ -1,70 +1,66 @@
 <template>
-  <BCard bg-variant="dark" border-variant="secondary" class="mb-4">
-    <template #header>
-      <h3 class="card-title mb-0">{{ languageStore.t('writeReview') }}</h3>
-    </template>
-    <BForm @submit.prevent="handleSubmit">
-      <BFormGroup :label="languageStore.t('yourName')" label-for="reviewerName" class="mb-3">
-        <BFormInput
-          id="reviewerName"
+  <v-card class="mb-4" variant="outlined">
+    <v-card-title class="text-h5">
+      {{ languageStore.t('writeReview') }}
+    </v-card-title>
+
+    <v-card-text>
+      <v-form @submit.prevent="handleSubmit">
+        <v-text-field
           v-model="form.reviewerName"
+          :label="languageStore.t('yourName')"
           required
-          bg-variant="dark"
-          border-variant="secondary"
-          class="text-primary text-bg-dark"
+          variant="outlined"
+          class="mb-3"
         />
-      </BFormGroup>
 
-      <BFormGroup :label="languageStore.t('dateWatched')" label-for="watchDate" class="mb-3">
-        <BFormInput
-          id="watchDate"
-          type="date"
+        <v-text-field
           v-model="form.watchDate"
+          :label="languageStore.t('dateWatched')"
+          type="date"
           required
-          bg-variant="dark"
-          border-variant="secondary"
-          class="text-primary text-bg-dark"
+          variant="outlined"
+          class="mb-3"
         />
-      </BFormGroup>
 
-      <BFormGroup :label="languageStore.t('reviewDetails')" label-for="reviewDetails" class="mb-3">
-        <BFormTextarea
-          id="reviewDetails"
+        <v-textarea
           v-model="form.reviewDetails"
+          :label="languageStore.t('reviewDetails')"
           rows="3"
           required
-          bg-variant="dark"
-          border-variant="secondary"
-          class="text-primary text-bg-dark"
+          variant="outlined"
+          class="mb-4"
         />
-      </BFormGroup>
 
-      <BFormGroup :label="languageStore.t('rating')" class="mb-4">
-        <div class="d-flex flex-wrap gap-2">
-          <BButton
-            v-for="rating in 10"
-            :key="rating"
-            :variant="form.rating === rating ? 'primary' : 'outline-primary'"
-            @click="form.rating = rating"
-            size="sm"
-            class="px-2"
-          >
-            {{ rating }}
-          </BButton>
+        <div class="mb-4">
+          <div class="text-subtitle-1 mb-2">{{ languageStore.t('rating') }}</div>
+          <div class="d-flex flex-wrap gap-2">
+            <v-btn
+              v-for="rating in 10"
+              :key="rating"
+              :color="form.rating === rating ? 'primary' : undefined"
+              :variant="form.rating === rating ? 'flat' : 'outlined'"
+              :class="{ 'selected-btn': form.rating === rating }"
+              size="small"
+              class="px-2"
+              @click="form.rating = rating"
+            >
+              <span :class="{ 'white-text': form.rating === rating }">{{ rating }}</span>
+            </v-btn>
+          </div>
         </div>
-      </BFormGroup>
 
-      <BButton type="submit" variant="primary">
-        {{ languageStore.t('submitReview') }}
-      </BButton>
-    </BForm>
-  </BCard>
+        <v-btn type="submit" color="primary" class="submit-btn">
+          <span class="white-text">{{ languageStore.t('submitReview') }}</span>
+        </v-btn>
+      </v-form>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useLanguageStore } from '@/stores/languageStore'
-import { BCard, BForm, BFormGroup, BFormInput, BFormTextarea, BButton } from 'bootstrap-vue-next'
 
 const languageStore = useLanguageStore()
 
@@ -91,3 +87,21 @@ const handleSubmit = () => {
   emit('submit', { ...form.value })
 }
 </script>
+
+<style scoped>
+.submit-btn, .selected-btn {
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5) !important;
+  transform: scale(0.98) !important;
+  opacity: 0.9 !important;
+  background-color: #0098cc !important;
+}
+
+.white-text {
+  color: white !important;
+}
+
+/* Target all elements inside submit-btn and selected-btn */
+.submit-btn *, .selected-btn * {
+  color: white !important;
+}
+</style>

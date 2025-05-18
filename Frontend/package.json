@@ -18,11 +18,8 @@
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
-    "@popperjs/core": "^2.11.8",
     "@vueform/multiselect": "^2.6.11",
     "axios": "^1.9.0",
-    "bootstrap": "^5.3.6",
-    "bootstrap-vue-next": "^0.29.2",
     "pinia": "^3.0.1",
     "sass": "^1.88.0",
     "swapi-ts": "^1.0.1",

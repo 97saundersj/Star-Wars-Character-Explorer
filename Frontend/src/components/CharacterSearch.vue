@@ -1,34 +1,33 @@
 <template>
-  <BFormGroup class="mb-5">
-    <BInputGroup size="lg">
-      <BInputGroupText class="bg-dark text-light border-secondary">
-        <i class="bi bi-search"></i>
-      </BInputGroupText>
-      <BFormInput
-        type="text"
-        class="bg-dark text-light border-secondary"
-        :placeholder="languageStore.t('searchCharacters')"
-        v-model="store.searchQuery"
-        @input="handleSearch"
-      />
-      <BButton
-        v-if="store.searchQuery"
-        variant="outline-secondary"
-        class="text-light border-secondary"
-        @click="clearSearch"
-        :title="languageStore.t('clearSearch')"
-      >
-        <i class="bi bi-x-lg"></i>
-      </BButton>
-    </BInputGroup>
-  </BFormGroup>
+  <v-form class="mb-5">
+    <v-text-field
+      v-model="store.searchQuery"
+      :placeholder="languageStore.t('searchCharacters')"
+      variant="outlined"
+      density="comfortable"
+      hide-details
+      @input="handleSearch"
+    >
+      <template v-slot:prepend>
+        <v-icon icon="mdi-magnify"></v-icon>
+      </template>
+      <template v-slot:append v-if="store.searchQuery">
+        <v-btn
+          variant="text"
+          icon="mdi-close"
+          size="small"
+          @click="clearSearch"
+          :title="languageStore.t('clearSearch')"
+        ></v-btn>
+      </template>
+    </v-text-field>
+  </v-form>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
-import { BFormGroup, BInputGroup, BInputGroupText, BFormInput, BButton } from 'bootstrap-vue-next'
 
 const store = useCharacterStore()
 const languageStore = useLanguageStore()
@@ -50,5 +49,4 @@ const clearSearch = async () => {
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

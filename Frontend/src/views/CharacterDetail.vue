@@ -1,9 +1,9 @@
 <template>
   <div v-if="character">
-    <BButton variant="outline-light" class="mb-4" :to="{ name: 'star-wars' }">
-      <i class="bi bi-arrow-left me-2"></i>
+    <v-btn variant="outlined" color="primary" class="mb-4" :to="{ name: 'star-wars' }">
+      <v-icon start icon="mdi-arrow-left" class="me-2"></v-icon>
       {{ languageStore.t('backToCharacters') }}
-    </BButton>
+    </v-btn>
 
     <CharacterInfo
       :name="character.name"
@@ -21,7 +21,6 @@ import { useRoute } from 'vue-router'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
 import { useToast } from 'vue-toastification'
-import { BButton } from 'bootstrap-vue-next'
 import CharacterInfo from '@/components/CharacterInfo.vue'
 import ReviewForm from '@/components/ReviewForm.vue'
 
