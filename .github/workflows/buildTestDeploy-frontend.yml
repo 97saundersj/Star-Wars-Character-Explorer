@@ -39,6 +39,11 @@ jobs:
         run: |
           cd Frontend
           npm run lint
+
+      - name: Run unit tests
+        run: |
+          cd Frontend
+          npm run test
           
       - name: Build And Deploy
         id: builddeploy

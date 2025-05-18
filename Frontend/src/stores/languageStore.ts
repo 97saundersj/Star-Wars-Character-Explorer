@@ -8,7 +8,8 @@ interface LanguageState {
 
 const translations = {
   en: {
-    appTitle: 'Characters',
+    appTitle: 'Star Wars Characters',
+    characters: 'Characters',
     birthYear: 'Birth Year',
     gender: 'Gender',
     height: 'Height',
@@ -57,7 +58,8 @@ const translations = {
     language: 'Language',
   },
   au: {
-    appTitle: 'Characters',
+    appTitle: 'Star Wars Characters',
+    characters: 'Characters',
     birthYear: 'Birth Year',
     gender: 'Gender',
     height: 'Height',
