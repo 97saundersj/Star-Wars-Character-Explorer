@@ -16,8 +16,8 @@ export const starwarsApi = {
 
       const response = await axios.get(url)
       return response.data
-    } catch (error) {
-      throw new Error('Failed to fetch characters')
+    } catch {
+      throw new Error()
     }
   },
 
@@ -25,8 +25,8 @@ export const starwarsApi = {
     try {
       const response = await axios.get(`${BASE_URL}/characters/${id}`)
       return response.data
-    } catch (error) {
-      throw new Error('Failed to fetch character')
+    } catch {
+      throw new Error()
     }
   },
 
@@ -37,8 +37,8 @@ export const starwarsApi = {
           'Content-Type': 'application/json',
         },
       })
-    } catch (error) {
-      throw new Error('Failed to submit review')
+    } catch {
+      throw new Error()
     }
   },
 }
