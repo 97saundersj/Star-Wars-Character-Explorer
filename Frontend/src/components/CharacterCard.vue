@@ -3,13 +3,13 @@
     :to="{ name: 'character-detail', params: { name: character.name } }"
     class="text-decoration-none d-block"
   >
-    <v-card class="h-100" variant="outlined">
-      <v-card-title class="d-flex justify-space-between align-center">
-        <span class="text-truncate">{{ character.name }}</span>
+    <v-card class="h-100 position-relative" variant="outlined">
+      <div style="position: absolute; top: 5px; right: 5px; z-index: 10;">
         <v-btn
+          icon
           variant="text"
           color="error"
-          class="p-0"
+          density="compact"
           @click.prevent="store.toggleLike(character._id)"
         >
           <v-icon
@@ -17,6 +17,10 @@
             size="large"
           ></v-icon>
         </v-btn>
+      </div>
+
+      <v-card-title class="text-subtitle-1 pe-8">
+        <span class="text-truncate">{{ character.name }}</span>
       </v-card-title>
 
       <div class="position-relative" style="aspect-ratio: 16/9">
