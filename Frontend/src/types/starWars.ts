@@ -1,3 +1,11 @@
+export interface Info {
+  total: number;
+  page: number;
+  limit: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
 export interface StarWarsCharacter {
   _id: string;
   name: string;
@@ -31,11 +39,5 @@ export interface CharacterState {
   hasPreviousPage: boolean;
   searchQuery: string;
   pageSize: number;
-  info: {
-    total: number;
-    page: number;
-    limit: number;
-    next: string | null;
-    prev: string | null;
-  };
+  info: Info;
 }

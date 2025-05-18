@@ -18,8 +18,8 @@ export const useCharacterStore = defineStore('character', {
       total: 0,
       page: 1,
       limit: 24,
-      next: null,
-      prev: null
+      hasNext: false,
+      hasPrevious: false
     }
   }),
 
@@ -43,8 +43,8 @@ export const useCharacterStore = defineStore('character', {
         // Set pagination state
         this.currentPage = this.info.page;
         this.totalPages = Math.ceil(this.info.total / this.info.limit);
-        this.hasNextPage = !!this.info.next;
-        this.hasPreviousPage = !!this.info.prev;
+        this.hasNextPage = this.info.hasNext;
+        this.hasPreviousPage = this.info.hasPrevious;
         this.error = null;
       } catch (error) {
         this.error = 'Failed to fetch characters';

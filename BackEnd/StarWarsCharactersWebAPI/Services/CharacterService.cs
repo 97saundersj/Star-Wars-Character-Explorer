@@ -1,32 +1,44 @@
-using StarWarsCharactersWebAPI.Services.Interfaces;
 using StarWarsCharactersWebAPI.Models;
-using System.Text;
+using StarWarsCharactersWebAPI.Services.Interfaces;
 
 namespace StarWarsCharactersWebAPI.Services
 {
-    public class CharacterService(ICharacterCacheService cacheService) : ICharacterService
+    public class CharacterService(ICharacterCacheService cacheService, ICharacterPaginationService paginationService) : ICharacterService
     {
         private readonly ICharacterCacheService _cacheService = cacheService;
+        private readonly ICharacterPaginationService _paginationService = paginationService;
 
-        public async Task<StarWarsResponse> GetAllCharactersAsync(int page = 1, int? limit = null, string? search = null)
+        public async Task<CharacterResponse> GetAllCharactersAsync(int page = 1, int? limit = null, string? search = null)
         {
             var allCharacters = await _cacheService.GetAllCharactersAsync();
-            var filteredCharacters = FilterCharacters(allCharacters.Data, search);
+            var filteredCharacters = FilterCharacters(allCharacters, search);
 
-            return CreatePaginatedResponse(filteredCharacters, page, limit ?? 10);
+            var additionalParams = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(search))
+            {
+                additionalParams["search"] = search;
+            }
+
+            return _paginationService.CreatePaginatedResult(
+                filteredCharacters,
+                page,
+                limit ?? 10,
+                additionalParams);
         }
 
-        public Task<StarWarsCharacter> GetCharacterByIdAsync(string id)
+        public async Task<Character> GetCharacterByIdAsync(string id)
         {
-            return _cacheService.GetCharacterByIdAsync(id);
+            var allCharacters = await _cacheService.GetAllCharactersAsync();
+            return allCharacters.First(c => c.Id == id);
         }
 
-        private static List<StarWarsCharacter> FilterCharacters(List<StarWarsCharacter> characters, string? search)
+        private static List<Character> FilterCharacters(List<Character> characters, string? search)
         {
             if (string.IsNullOrEmpty(search))
                 return characters;
 
             var normalizedSearch = NormalizeString(search);
+
             return characters
                 .Where(c => NormalizeString(c.Name).Contains(normalizedSearch) ||
                           (c.Description != null && NormalizeString(c.Description).Contains(normalizedSearch)))
@@ -43,31 +55,6 @@ namespace StarWarsCharactersWebAPI.Services
                 .ToLowerInvariant()
                 .Replace("-", "")
                 .Replace(" ", "");
-        }
-
-        private static StarWarsResponse CreatePaginatedResponse(List<StarWarsCharacter> characters, int page, int pageSize)
-        {
-            var totalItems = characters.Count;
-            var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
-            page = Math.Max(1, Math.Min(page, totalPages));
-
-            var pagedCharacters = characters
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-
-            return new StarWarsResponse
-            {
-                Info = new()
-                {
-                    Total = totalItems,
-                    Page = page,
-                    Limit = pageSize,
-                    Next = page < totalPages ? $"/api/StarWars/characters?page={page + 1}&limit={pageSize}" : null,
-                    Prev = page > 1 ? $"/api/StarWars/characters?page={page - 1}&limit={pageSize}" : null
-                },
-                Data = pagedCharacters
-            };
         }
     }
 }

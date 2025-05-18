@@ -1,5 +1,6 @@
 using StarWarsCharactersWebAPI.Services.Interfaces;
 using StarWarsCharactersWebAPI.Services;
+using System.Text.Json.Serialization;
 
 namespace StarWarsCharactersWebAPI;
 
@@ -13,8 +14,9 @@ public class Program
         builder.Services.AddControllers()
             .AddJsonOptions(options =>
             {
-                options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                 options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
 
         // Add Star Wars services
@@ -22,6 +24,7 @@ public class Program
         builder.Services.AddMemoryCache();
         builder.Services.AddScoped<ICharacterCacheService, CharacterCacheService>();
         builder.Services.AddScoped<ICharacterService, CharacterService>();
+        builder.Services.AddScoped<ICharacterPaginationService, CharacterPaginationService>();
 
         // Add CORS services
         builder.Services.AddCors(options =>

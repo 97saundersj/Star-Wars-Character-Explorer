@@ -12,68 +12,43 @@ namespace StarWarsCharactersWebAPI.Services
         private const string BaseUrl = "https://starwars-databank-server.vercel.app/api/v1";
         private const int InitialFetchLimit = 1000;
         private const int DefaultCacheExpirationMinutes = 15;
-        private const int CharacterCacheExpirationHours = 1;
 
-        public async Task<StarWarsResponse> GetAllCharactersAsync()
+        public async Task<List<Character>> GetAllCharactersAsync()
         {
             const string cacheKey = "all_characters";
+            return await GetOrSetCacheAsync(cacheKey, FetchAllCharactersAsync, DefaultCacheExpirationMinutes) ?? [];
+        }
 
-            // Try to get from cache first
-            if (_cache.TryGetValue(cacheKey, out StarWarsResponse cachedData))
+        private async Task<T?> GetOrSetCacheAsync<T>(string cacheKey, Func<Task<T?>> fetchData, int expirationMinutes)
+        {
+            if (_cache.TryGetValue(cacheKey, out T? cachedData))
             {
                 return cachedData;
             }
 
-            // If not in cache, fetch the data
-            var data = await FetchAllCharactersAsync();
-
+            var data = await fetchData();
             if (data != null)
             {
-                // Store in cache with expiration
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(DefaultCacheExpirationMinutes));
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(expirationMinutes));
                 _cache.Set(cacheKey, data, cacheOptions);
             }
 
             return data;
         }
 
-        public async Task<StarWarsCharacter> GetCharacterByIdAsync(string id)
+        private async Task<List<Character>?> FetchAllCharactersAsync()
         {
-            string cacheKey = $"character_{id}";
-
-            // Try to get from cache first
-            if (_cache.TryGetValue(cacheKey, out StarWarsCharacter cachedData))
-            {
-                return cachedData;
-            }
-
-            // If not in cache, fetch the data
-            var data = await FetchCharacterByIdAsync(id);
-
-            if (data != null)
-            {
-                // Store in cache with expiration
-                var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromHours(CharacterCacheExpirationHours));
-                _cache.Set(cacheKey, data, cacheOptions);
-            }
-
-            return data;
-        }
-
-        private async Task<StarWarsResponse> FetchAllCharactersAsync()
-        {
-            var allData = new List<StarWarsCharacter>();
+            var allData = new List<Character>();
             int currentPage = 1;
-            StarWarsResponse? pageResult;
+            CharacterResponse? pageResult;
 
             do
             {
                 var response = await _httpClient.GetAsync($"{BaseUrl}/characters?page={currentPage}&limit={InitialFetchLimit}");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
-                pageResult = JsonSerializer.Deserialize<StarWarsResponse>(content);
+                pageResult = JsonSerializer.Deserialize<CharacterResponse>(content);
 
                 if (pageResult?.Data != null)
                     allData.AddRange(pageResult.Data);
@@ -81,36 +56,7 @@ namespace StarWarsCharactersWebAPI.Services
                 currentPage++;
             } while (pageResult?.Info != null && currentPage <= (int)Math.Ceiling((double)pageResult.Info.Total / pageResult.Info.Limit));
 
-            return new StarWarsResponse
-            {
-                Info = new StarWarsInfo
-                {
-                    Total = allData.Count,
-                    Page = 1,
-                    Limit = allData.Count,
-                    Next = null,
-                    Prev = null
-                },
-                Data = allData
-            };
-        }
-
-        private async Task<StarWarsCharacter> FetchCharacterByIdAsync(string id)
-        {
-            try
-            {
-                var response = await _httpClient.GetAsync($"{BaseUrl}/characters/{id}");
-                if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
-                    return null;
-
-                response.EnsureSuccessStatusCode();
-                var content = await response.Content.ReadAsStringAsync();
-                return JsonSerializer.Deserialize<StarWarsCharacter>(content);
-            }
-            catch (HttpRequestException)
-            {
-                return null;
-            }
+            return allData;
         }
     }
 }
