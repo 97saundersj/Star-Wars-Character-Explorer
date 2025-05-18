@@ -1,11 +1,6 @@
 <template>
   <div v-if="character">
-    <v-btn
-      variant="outlined"
-      color="primary"
-      class="mb-4"
-      :to="{ name: 'star-wars' }"
-    >
+    <v-btn variant="outlined" color="primary" class="mb-4" :to="{ name: 'star-wars' }">
       <v-icon start icon="mdi-arrow-left" class="me-2"></v-icon>
       {{ languageStore.t('backToCharacters') }}
     </v-btn>

@@ -3,12 +3,7 @@
     <v-progress-circular indeterminate color="primary" size="48"></v-progress-circular>
   </div>
 
-  <v-alert
-    v-else-if="characters.length === 0"
-    type="info"
-    variant="tonal"
-    class="mb-4"
-  >
+  <v-alert v-else-if="characters.length === 0" type="info" variant="tonal" class="mb-4">
     <v-icon start icon="mdi-information" class="me-2"></v-icon>
     {{ languageStore.t('noResults') }}
   </v-alert>

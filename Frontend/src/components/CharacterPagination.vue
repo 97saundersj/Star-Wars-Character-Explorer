@@ -1,8 +1,5 @@
 <template>
-  <v-row
-    class="align-center justify-center"
-    :class="{ 'mt-4': isBottom, 'mb-3': true }"
-  >
+  <v-row class="align-center justify-center my-4">
     <v-col cols="12" sm="auto" class="mb-2 mb-sm-0 d-flex align-center">
       <div class="d-flex align-center justify-center">
         <span class="me-2 font-weight-medium">{{ languageStore.t('displayLimit') }}:</span>
@@ -43,14 +40,8 @@
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
 
-const props = defineProps<{
-  isBottom?: boolean
-}>()
-
 const store = useCharacterStore()
 const languageStore = useLanguageStore()
-
-const pageSizeId = props.isBottom ? 'pageSizeBottom' : 'pageSize'
 
 const handlePageSizeChange = async () => {
   await store.fetchCharacters(1)

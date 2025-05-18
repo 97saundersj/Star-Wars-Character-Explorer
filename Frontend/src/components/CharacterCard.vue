@@ -12,11 +12,14 @@
           class="p-0"
           @click.prevent="store.toggleLike(character.name)"
         >
-          <v-icon :icon="character.isLiked ? 'mdi-heart' : 'mdi-heart-outline'" size="small"></v-icon>
+          <v-icon
+            :icon="character.isLiked ? 'mdi-heart' : 'mdi-heart-outline'"
+            size="small"
+          ></v-icon>
         </v-btn>
       </v-card-title>
 
-      <div class="position-relative" style="aspect-ratio: 16/9;">
+      <div class="position-relative" style="aspect-ratio: 16/9">
         <div
           v-if="!imageLoaded"
           class="position-absolute top-0 start-0 w-100 h-100 d-flex align-center justify-center bg-dark bg-opacity-50"

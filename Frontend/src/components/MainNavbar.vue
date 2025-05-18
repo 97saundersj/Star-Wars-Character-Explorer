@@ -5,7 +5,7 @@
 
       <router-link to="/" class="text-decoration-none">
         <v-app-bar-title class="text-primary font-weight-bold">
-          <v-icon icon="mdi-star" class="me-2"></v-icon>Star Wars Characters
+          <v-icon icon="mdi-star" class="me-2"></v-icon>{{ languageStore.t('appTitle') }}
         </v-app-bar-title>
       </router-link>
     </v-container>
@@ -14,11 +14,7 @@
   <v-navigation-drawer v-model="drawer">
     <v-list>
       <template v-for="item in navItems" :key="item.to">
-        <v-list-item
-          :to="item.to"
-          :prepend-icon="item.icon"
-          :title="item.title"
-        ></v-list-item>
+        <v-list-item :to="item.to" :prepend-icon="item.icon" :title="item.title"></v-list-item>
       </template>
     </v-list>
 
@@ -35,6 +31,10 @@ import { ref } from 'vue'
 import { useLanguageStore } from '@/stores/languageStore'
 import LanguageSelector from './LanguageSelector.vue'
 
+defineOptions({
+  name: 'MainNavbar',
+})
+
 const languageStore = useLanguageStore()
 const drawer = ref(false)
 
@@ -42,12 +42,12 @@ const navItems = [
   {
     title: 'Characters',
     to: '/',
-    icon: 'mdi-account-card'
+    icon: 'mdi-account-card',
   },
   {
     title: 'About',
     to: '/about',
-    icon: 'mdi-information'
-  }
+    icon: 'mdi-information',
+  },
 ]
 </script>

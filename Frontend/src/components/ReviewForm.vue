@@ -40,17 +40,18 @@
               :key="rating"
               :color="form.rating === rating ? 'primary' : undefined"
               :variant="form.rating === rating ? 'flat' : 'outlined'"
+              :class="{ 'selected-btn': form.rating === rating }"
               size="small"
               class="px-2"
               @click="form.rating = rating"
             >
-              {{ rating }}
+              <span :class="{ 'white-text': form.rating === rating }">{{ rating }}</span>
             </v-btn>
           </div>
         </div>
 
-        <v-btn type="submit" color="primary">
-          {{ languageStore.t('submitReview') }}
+        <v-btn type="submit" color="primary" class="submit-btn">
+          <span class="white-text">{{ languageStore.t('submitReview') }}</span>
         </v-btn>
       </v-form>
     </v-card-text>
@@ -86,3 +87,21 @@ const handleSubmit = () => {
   emit('submit', { ...form.value })
 }
 </script>
+
+<style scoped>
+.submit-btn, .selected-btn {
+  box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5) !important;
+  transform: scale(0.98) !important;
+  opacity: 0.9 !important;
+  background-color: #0098cc !important;
+}
+
+.white-text {
+  color: white !important;
+}
+
+/* Target all elements inside submit-btn and selected-btn */
+.submit-btn *, .selected-btn * {
+  color: white !important;
+}
+</style>

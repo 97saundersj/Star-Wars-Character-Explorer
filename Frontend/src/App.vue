@@ -1,6 +1,6 @@
 <template>
   <v-app class="bg-dark">
-    <Navbar />
+    <MainNavbar />
 
     <v-main>
       <v-container class="py-4">
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
-import Navbar from '@/components/Navbar.vue'
+import MainNavbar from '@/components/MainNavbar.vue'
 import '@/assets/fonts.css'
 </script>
 
@@ -38,8 +38,9 @@ html[data-language='au'] * {
 
 /* Prevent EN button from changing font */
 html[data-language='au'] .v-btn:first-child {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
-    'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif !important;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans',
+    'Droid Sans', 'Helvetica Neue', sans-serif !important;
   font-size: 1em !important;
 }
 </style>
