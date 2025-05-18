@@ -119,7 +119,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCharacterStore } from '@/stores/characterStore'
 import { useLanguageStore } from '@/stores/languageStore'
-import { useToast, POSITION } from 'vue-toastification'
+import { useToast } from 'vue-toastification'
 import {
   BButton,
   BCard,

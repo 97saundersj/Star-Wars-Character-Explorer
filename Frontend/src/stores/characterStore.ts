@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia'
-import type { CharacterReview, CharacterState, Character, StarWarsCharacter } from '@/types/starWars'
+import type { CharacterReview, CharacterState, Character } from '@/types/starWars'
 import { starwarsApi } from '@/services/starwarsApi'
 
 export const useCharacterStore = defineStore('character', {
   state: (): CharacterState => ({
     characters: [],
     loading: false,
-    error: null,
     reviews: [],
     currentPage: 1,
     totalPages: 1,
@@ -45,9 +44,8 @@ export const useCharacterStore = defineStore('character', {
         this.totalPages = Math.ceil(this.info.total / this.info.limit);
         this.hasNextPage = this.info.hasNext;
         this.hasPreviousPage = this.info.hasPrevious;
-        this.error = null;
-      } catch (error) {
-        this.error = 'Failed to fetch characters';
+      } catch {
+        throw new Error();
       } finally {
         this.loading = false;
       }
@@ -77,22 +75,11 @@ export const useCharacterStore = defineStore('character', {
       }
     },
 
-    async submitReview(review: Omit<CharacterReview, 'id' | 'createdAt'>) {
+    async submitReview(review: CharacterReview) {
       try {
-        // This will fail as specified in the requirements
-        await fetch('https://akabab.github.io/starwars-api/api/reviews/', {
-          method: 'POST',
-          body: JSON.stringify(review)
-        })
+        await starwarsApi.submitReview(review);
       } catch {
-        // Store the review locally since the API call will fail
-        const newReview: CharacterReview = {
-          ...review,
-          id: crypto.randomUUID(),
-          createdAt: new Date().toISOString()
-        }
-        this.reviews.push(newReview)
-        throw new Error('Failed to submit review to API, but saved locally')
+        throw new Error();
       }
     }
   },

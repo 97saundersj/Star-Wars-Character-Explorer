@@ -28,7 +28,7 @@
         align="center"
         @update:model-value="(page) => store.fetchCharacters(Number(page))"
         size="lg"
-        class="pagination-mobile"
+        class="d-flex flex-wrap justify-content-center gap-1"
       >
         <template #first-text>
           <i class="bi bi-chevron-double-left"></i>
@@ -73,30 +73,35 @@ const handlePageSizeChange = async () => {
 </script>
 
 <style scoped>
-.pagination-mobile {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.25rem;
+:deep(.page-link) {
+  background-color: #212529;
+  border-color: #6c757d;
+  color: #fff;
+  transition: all 0.2s ease;
+  padding: 0.5rem 0.75rem;
 }
 
-:deep(.page-link) {
-  padding: 0.5rem 0.75rem;
+:deep(.page-link:hover) {
+  background-color: #2b3035;
+  border-color: #0d6efd;
+  transform: translateY(-1px);
+}
+
+:deep(.page-item.active .page-link) {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+:deep(.page-item.disabled .page-link) {
+  background-color: #212529;
+  border-color: #6c757d;
+  opacity: 0.5;
 }
 
 @media (max-width: 576px) {
   :deep(.page-link) {
     padding: 0.25rem 0.375rem;
     font-size: 0.875rem;
-  }
-
-  :deep(.pagination) {
-    margin: 0;
-    flex-wrap: wrap;
-  }
-
-  :deep(.page-item) {
-    margin: 0;
   }
 }
 </style>

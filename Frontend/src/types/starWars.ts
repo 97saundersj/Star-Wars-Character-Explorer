@@ -31,7 +31,6 @@ export interface CharacterReview {
 export interface CharacterState {
   characters: Character[];
   loading: boolean;
-  error: string | null;
   reviews: CharacterReview[];
   currentPage: number;
   totalPages: number;
