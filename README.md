@@ -38,9 +38,6 @@ npm run build
 
 # Run unit tests
 npm run test:unit
-
-# Run end-to-end tests
-npm run test:e2e
 ```
 
 ## API Integration
@@ -50,7 +47,6 @@ The application uses the Star Wars API (SWAPI) for character data:
 - Endpoints used:
   - /people/ - List of characters
   - /people/{id}/ - Character details
-
 
 ## Project Structure
 

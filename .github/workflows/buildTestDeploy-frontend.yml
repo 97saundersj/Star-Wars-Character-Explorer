@@ -43,7 +43,7 @@ jobs:
       - name: Run unit tests
         run: |
           cd Frontend
-          npm run test
+          npm run test:unit
           
       - name: Build And Deploy
         id: builddeploy
