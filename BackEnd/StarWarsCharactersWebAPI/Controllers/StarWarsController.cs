@@ -11,7 +11,7 @@ namespace StarWarsCharactersWebAPI.Controllers
         private readonly ICharacterService _starWarsService = starWarsService;
 
         [HttpGet("characters")]
-        public async Task<ActionResult<StarWarsResponse>> GetAllCharacters(
+        public async Task<ActionResult<CharacterResponse>> GetAllCharacters(
             [FromQuery] int page = 1,
             [FromQuery] int? limit = 10,
             [FromQuery] string? search = null)
@@ -28,15 +28,11 @@ namespace StarWarsCharactersWebAPI.Controllers
         }
 
         [HttpGet("characters/{id}")]
-        public async Task<ActionResult<StarWarsCharacter>> GetCharacterById(string id)
+        public async Task<ActionResult<Character>> GetCharacterById(string id)
         {
             try
             {
                 var character = await _starWarsService.GetCharacterByIdAsync(id);
-                if (character == null)
-                {
-                    return NotFound($"Character with ID {id} not found");
-                }
                 return Ok(character);
             }
             catch (Exception ex)
