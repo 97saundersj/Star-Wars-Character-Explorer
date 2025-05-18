@@ -1,68 +1,61 @@
 # Star Wars Character Web App
 
-A Vue 3 application that allows users to browse Star Wars characters, view their details, and submit reviews.
+This repository hosts the Front End and Back End code for a web application that allows users to browse Star Wars characters, view their details, and submit reviews.
 
 ## Features
 
-- Browse Star Wars characters from the SWAPI
+- Browse Star Wars characters from the [Star Wars Databank API](https://starwars-databank.vercel.app/)
 - View detailed information about each character
 - Like/unlike characters
-- Submit reviews for characters including:
-  - Reviewer name
-  - Watch date
-  - Review details
-  - Rating (1-10)
-- View existing reviews for characters
-- Local storage for reviews (since the API doesn't support review submission)
+- (Attempt to) Submit reviews for characters
+- Support for both English and Aurebesh language options
 
-## Tech Stack
+## Frontend [![Build & deploy Frontend](https://github.com/97saundersj/Vue-Test/actions/workflows/frontend-deploy.yml/badge.svg)](https://github.com/97saundersj/Vue-Test/actions)
 
-- Vue 3
-- TypeScript
-- Vuetify 3
-- Pinia for state management
-- Vue Router
-- Axios for API calls
+[Vue Web App](https://salmon-glacier-0858cd303.6.azurestaticapps.net/)
 
-## Project Setup
+### Running the Frontend Project
 
-```bash
-# Install dependencies
-npm install
+**Open the Project in VS Code:**
+1. Launch VS Code.
+2. Open the `Frontend` folder.
 
-# Start development server
-npm run dev
+**Install Dependencies:**
+   Make sure you have [Node.js](https://nodejs.org/) installed. Then run:
+   ```
+   npm install
+   ```
 
-# Build for production
-npm run build
+**Start the Development Server:**
+   ```
+   npm run dev
+   ```
 
-# Run unit tests
-npm run test:unit
-```
+### Running Tests
 
-## API Integration
+**Run Tests:**
+   To execute tests, use:
+   ```
+   npm run test:unit
+   ```
 
-The application uses the Star Wars API (SWAPI) for character data:
-- Base URL: https://swapi.dev/api/
-- Endpoints used:
-  - /people/ - List of characters
-  - /people/{id}/ - Character details
+## Backend [![Build & deploy Backend](https://github.com/97saundersj/Vue-Test/actions/workflows/backend-deploy.yml/badge.svg)](https://github.com/97saundersj/Vue-Test/actions)
 
-## Project Structure
+[Web API Swagger Page](https://starwarsapi-hxcqbxddd4hhacaq.ukwest-01.azurewebsites.net/swagger/index.html)
 
-```
-src/
-├── assets/         # Static assets
-├── components/     # Reusable Vue components
-├── router/         # Vue Router configuration
-├── stores/         # Pinia stores
-├── types/          # TypeScript type definitions
-└── views/          # Vue page components
-```
+### Running the Backend Project
 
-## Development Notes
+**Open the Solution in Visual Studio:**
+1. Launch Visual Studio.
+2. Open the solution file located in the `Backend` directory.
 
-- The application uses Vuetify for UI components and styling
-- State management is handled by Pinia
-- TypeScript is used for type safety
-- The review submission is designed to fail as per requirements, with local storage as a fallback
+**Set the Startup Project:**
+- Right-click on the API project in the Solution Explorer and select "Set as StartUp Project".
+
+**Run the Project:**
+- Press `F5` or click on the "Start" button to run the project. This will start the web API.
+
+### Running Tests
+To execute tests for the Back End:
+1. Open the test project in Solution Explorer.
+2. Right-click on the project and select "Run Tests" or use the Test Explorer to run all tests.
