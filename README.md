@@ -6,7 +6,7 @@ This repository hosts the Front End and Back End code for a web application that
 
 - Browse Star Wars characters from the [Star Wars Databank API](https://starwars-databank.vercel.app/)
 - View detailed information about each character
-- Like/unlike characters
+- Like characters
 - (Attempt to) Submit reviews for characters
 - Support for both English and Aurebesh language options
 
@@ -42,6 +42,12 @@ This repository hosts the Front End and Back End code for a web application that
 ## Backend [![Build & deploy Backend](https://github.com/97saundersj/Star-Wars-Character-Explorer/actions/workflows/buildTestDeploy-backend.yml/badge.svg)](https://github.com/97saundersj/Star-Wars-Character-Explorer/actions/workflows/buildTestDeploy-backend.yml)
 
 [Web API Swagger Page](https://starwarsapi-hxcqbxddd4hhacaq.ukwest-01.azurewebsites.net/swagger/index.html)
+
+The backend is a .NET Web API that integrates with an external API to provide character data.
+It provides the following features:
+
+- Fetches and caches character data from the [Star Wars Databank API](https://starwars-databank.vercel.app/)
+- Provides custom endpoints for searching characters (since this isn't available in the external API)
 
 ### Running the Backend Project
 
