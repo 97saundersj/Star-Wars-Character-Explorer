@@ -15,7 +15,6 @@ namespace StarWarsCharactersWebAPI.Services.Interfaces
         CharacterResponse CreatePaginatedResult(
             IEnumerable<Character> items,
             int page,
-            int pageSize,
-            IDictionary<string, string>? additionalParams = null);
+            int pageSize);
     }
 } 

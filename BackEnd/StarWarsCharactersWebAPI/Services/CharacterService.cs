@@ -13,17 +13,10 @@ namespace StarWarsCharactersWebAPI.Services
             var allCharacters = await _cacheService.GetAllCharactersAsync();
             var filteredCharacters = FilterCharacters(allCharacters, search);
 
-            var additionalParams = new Dictionary<string, string>();
-            if (!string.IsNullOrEmpty(search))
-            {
-                additionalParams["search"] = search;
-            }
-
             return _paginationService.CreatePaginatedResult(
                 filteredCharacters,
                 page,
-                limit ?? 10,
-                additionalParams);
+                limit ?? 10);
         }
 
         public async Task<Character> GetCharacterByIdAsync(string id)

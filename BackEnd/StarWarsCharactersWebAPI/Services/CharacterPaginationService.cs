@@ -11,8 +11,7 @@ namespace StarWarsCharactersWebAPI.Services
         public CharacterResponse CreatePaginatedResult(
             IEnumerable<Character> items,
             int page,
-            int pageSize,
-            IDictionary<string, string>? additionalParams = null)
+            int pageSize)
         {
             var itemsList = items.ToList();
             var totalItems = itemsList.Count;
