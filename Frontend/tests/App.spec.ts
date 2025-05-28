@@ -3,7 +3,6 @@ import { mount } from '@vue/test-utils'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import { createPinia, setActivePinia } from 'pinia'
 import App from '../src/App.vue'
-import CharacterList from '../src/views/CharacterList.vue'
 import CharacterListPage from '../src/views/CharacterListPage.vue'
 
 // Mock the MainNavbar component

@@ -20,10 +20,11 @@
 
 <script setup lang="ts">
 import CharacterCard from './CharacterCard.vue'
+import type { Character } from '@/types/starWars'
 
 defineProps<{
   loading: boolean
-  characters: any[]
+  characters: Character[]
   noResultsText: string
 }>()
 </script>
