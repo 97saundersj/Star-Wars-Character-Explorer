@@ -77,7 +77,7 @@ export const useCharacterStore = defineStore('character', {
             this.likedCharacterIds.push(characterId)
           }
         } else {
-          this.likedCharacterIds = this.likedCharacterIds.filter(id => id !== characterId)
+          this.likedCharacterIds = this.likedCharacterIds.filter((id) => id !== characterId)
         }
 
         // Save to localStorage
@@ -97,10 +97,12 @@ export const useCharacterStore = defineStore('character', {
       this.loading = true
       try {
         const character = await starwarsApi.getCharacterById(id)
-        this.characters = [{
-          ...character,
-          isLiked: this.likedCharacterIds.includes(character._id),
-        }]
+        this.characters = [
+          {
+            ...character,
+            isLiked: this.likedCharacterIds.includes(character._id),
+          },
+        ]
       } catch {
         throw new Error()
       } finally {

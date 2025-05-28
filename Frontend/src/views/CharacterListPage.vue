@@ -8,7 +8,11 @@
 
     <CharacterPagination />
 
-    <CharacterItems :loading="store.loading" :characters="store.characters" :no-results-text="languageStore.t('noResults')" />
+    <CharacterItems
+      :loading="store.loading"
+      :characters="store.characters"
+      :no-results-text="languageStore.t('noResults')"
+    />
 
     <CharacterPagination />
   </v-container>

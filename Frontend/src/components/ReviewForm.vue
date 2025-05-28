@@ -89,7 +89,8 @@ const handleSubmit = () => {
 </script>
 
 <style scoped>
-.submit-btn, .selected-btn {
+.submit-btn,
+.selected-btn {
   box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5) !important;
   transform: scale(0.98) !important;
   opacity: 0.9 !important;
@@ -101,7 +102,8 @@ const handleSubmit = () => {
 }
 
 /* Target all elements inside submit-btn and selected-btn */
-.submit-btn *, .selected-btn * {
+.submit-btn *,
+.selected-btn * {
   color: white !important;
 }
 </style>
