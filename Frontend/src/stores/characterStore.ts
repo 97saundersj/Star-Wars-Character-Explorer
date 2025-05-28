@@ -92,6 +92,21 @@ export const useCharacterStore = defineStore('character', {
         throw new Error()
       }
     },
+
+    async fetchCharacterById(id: string) {
+      this.loading = true
+      try {
+        const character = await starwarsApi.getCharacterById(id)
+        this.characters = [{
+          ...character,
+          isLiked: this.likedCharacterIds.includes(character._id),
+        }]
+      } catch {
+        throw new Error()
+      } finally {
+        this.loading = false
+      }
+    },
   },
 
   getters: {

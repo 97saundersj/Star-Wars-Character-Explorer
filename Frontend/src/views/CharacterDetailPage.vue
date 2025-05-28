@@ -45,7 +45,7 @@ const submitReview = async (review: {
 }) => {
   try {
     await store.submitReview({
-      id: crypto.randomUUID(),
+      id: character.value?._id || '',
       characterName: route.params.name as string,
       ...review,
       createdAt: new Date().toISOString(),

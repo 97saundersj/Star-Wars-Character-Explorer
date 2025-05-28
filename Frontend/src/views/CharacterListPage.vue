@@ -8,15 +8,9 @@
 
     <CharacterPagination />
 
-    <CharacterStatus :loading="store.loading" :characters="store.characters" />
+    <CharacterItems :loading="store.loading" :characters="store.characters" :no-results-text="languageStore.t('noResults')" />
 
-    <v-row v-if="!store.loading && store.characters.length > 0" class="g-4">
-      <v-col v-for="character in store.characters" :key="character.name" cols="6" md="4" lg="3">
-        <CharacterCard :character="character" />
-      </v-col>
-    </v-row>
-
-    <CharacterPagination :is-bottom="true" />
+    <CharacterPagination />
   </v-container>
 </template>
 
@@ -27,8 +21,7 @@ import { useLanguageStore } from '@/stores/languageStore'
 import { useToast } from 'vue-toastification'
 import CharacterPagination from '@/components/CharacterPagination.vue'
 import CharacterSearch from '@/components/CharacterSearch.vue'
-import CharacterCard from '@/components/CharacterCard.vue'
-import CharacterStatus from '@/components/CharacterStatus.vue'
+import CharacterItems from '@/components/CharacterItems.vue'
 
 const store = useCharacterStore()
 const languageStore = useLanguageStore()

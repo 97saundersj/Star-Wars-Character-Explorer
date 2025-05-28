@@ -4,6 +4,7 @@ import { createRouter, createMemoryHistory } from 'vue-router'
 import { createPinia, setActivePinia } from 'pinia'
 import App from '../src/App.vue'
 import CharacterList from '../src/views/CharacterList.vue'
+import CharacterListPage from '../src/views/CharacterListPage.vue'
 
 // Mock the MainNavbar component
 vi.mock('../src/components/MainNavbar.vue', () => ({
@@ -40,7 +41,7 @@ describe('App Component', () => {
     // Arrange
     const router = createRouter({
       history: createMemoryHistory(),
-      routes: [{ path: '/', component: CharacterList }]
+      routes: [{ path: '/', component: CharacterListPage }]
     })
 
     // Act
@@ -57,11 +58,11 @@ describe('App Component', () => {
     expect(wrapper.element).toBeDefined()
   })
 
-  it('renders CharacterList component', async () => {
+  it('renders CharacterListPage component', async () => {
     // Arrange
     const router = createRouter({
       history: createMemoryHistory(),
-      routes: [{ path: '/', component: CharacterList }]
+      routes: [{ path: '/', component: CharacterListPage }]
     })
 
     // Act
