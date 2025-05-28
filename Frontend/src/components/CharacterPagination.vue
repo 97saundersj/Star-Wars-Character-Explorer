@@ -22,6 +22,7 @@
         ></v-select>
       </div>
     </v-col>
+
     <v-col cols="12" sm="auto" class="d-flex align-center">
       <v-pagination
         v-if="store.pageSize !== 1000"

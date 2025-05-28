@@ -4,7 +4,7 @@
     class="text-decoration-none d-block"
   >
     <v-card class="h-100 position-relative" variant="outlined">
-      <div style="position: absolute; top: 5px; right: 5px; z-index: 10;">
+      <div style="position: absolute; top: 5px; right: 5px; z-index: 10">
         <v-btn
           icon
           variant="text"

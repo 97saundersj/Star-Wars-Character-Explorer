@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import CharacterList from '../views/CharacterList.vue'
-import CharacterDetail from '../views/CharacterDetail.vue'
+import CharacterListPage from '../views/CharacterListPage.vue'
+import CharacterDetailPage from '../views/CharacterDetailPage.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -8,17 +8,17 @@ const router = createRouter({
     {
       path: '/',
       name: 'star-wars',
-      component: CharacterList,
+      component: CharacterListPage,
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutView.vue'),
+      component: () => import('../views/AboutPage.vue'),
     },
     {
       path: '/character/:name',
       name: 'character-detail',
-      component: CharacterDetail,
+      component: CharacterDetailPage,
       props: true,
     },
     {

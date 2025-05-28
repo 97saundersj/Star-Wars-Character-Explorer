@@ -42,6 +42,7 @@ namespace StarWarsCharactersWebAPI.Services
             var allData = new List<Character>();
             int currentPage = 1;
             CharacterResponse? pageResult;
+            int totalPages = 0;
 
             do
             {
@@ -51,10 +52,17 @@ namespace StarWarsCharactersWebAPI.Services
                 pageResult = JsonSerializer.Deserialize<CharacterResponse>(content);
 
                 if (pageResult?.Data != null)
+                {
                     allData.AddRange(pageResult.Data);
+                }
+
+                if (pageResult?.Info != null)
+                {
+                    totalPages = (int)Math.Ceiling((double)pageResult.Info.Total / pageResult.Info.Limit);
+                }
 
                 currentPage++;
-            } while (pageResult?.Info != null && currentPage <= (int)Math.Ceiling((double)pageResult.Info.Total / pageResult.Info.Limit));
+            } while (pageResult?.Info != null && currentPage <= totalPages);
 
             return allData;
         }
