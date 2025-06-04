@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace StarWarsCharactersWebAPI.Models
 {
-    public class Character(string id, string name, string? description, string? image)
+    public class Character(string id, string name, string? description, string? image) : IStarWarsEntity
     {
         [JsonPropertyName("_id")]
         public string Id { get; set; } = id;
