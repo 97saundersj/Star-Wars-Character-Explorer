@@ -2,7 +2,7 @@
   <v-form class="mb-5">
     <v-text-field
       v-model="store.searchQuery"
-      :placeholder="languageStore.t('searchCharacters')"
+      :placeholder="languageStore.getLocalizedText('searchCharacters')"
       variant="outlined"
       density="comfortable"
       hide-details
@@ -17,7 +17,7 @@
           icon="mdi-close"
           size="small"
           @click="clearSearch"
-          :title="languageStore.t('clearSearch')"
+          :title="languageStore.getLocalizedText('clearSearch')"
         ></v-btn>
       </template>
     </v-text-field>

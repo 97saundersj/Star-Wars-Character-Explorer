@@ -1,7 +1,7 @@
 <template>
   <v-container class="py-4" data-testid="mock-character-list">
     <div class="mb-5">
-      <h1 class="text-h3 font-weight-bold mb-3">{{ languageStore.t('characters') }}</h1>
+      <h1 class="text-h3 font-weight-bold mb-3">{{ languageStore.getLocalizedText('characters') }}</h1>
     </div>
 
     <CharacterSearch />
@@ -11,7 +11,7 @@
     <CharacterItems
       :loading="store.loading"
       :characters="store.characters"
-      :no-results-text="languageStore.t('noResults')"
+      :no-results-text="languageStore.getLocalizedText('noResults')"
     />
 
     <CharacterPagination />
@@ -35,7 +35,7 @@ onMounted(async () => {
   try {
     await store.fetchCharacters()
   } catch {
-    toast.error('Error fetching characters.\nI have a bad feeling about this...')
+    toast.error(languageStore.getLocalizedText('errorFetchingCharacters'))
   }
 })
 </script>

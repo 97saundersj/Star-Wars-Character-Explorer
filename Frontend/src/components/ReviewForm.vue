@@ -1,14 +1,14 @@
 <template>
   <v-card class="mb-4" variant="outlined">
     <v-card-title class="text-h5">
-      {{ languageStore.t('writeReview') }}
+      {{ languageStore.getLocalizedText('writeReview') }}
     </v-card-title>
 
     <v-card-text>
       <v-form @submit.prevent="handleSubmit">
         <v-text-field
           v-model="form.reviewerName"
-          :label="languageStore.t('yourName')"
+          :label="languageStore.getLocalizedText('yourName')"
           required
           variant="outlined"
           class="mb-3"
@@ -16,7 +16,7 @@
 
         <v-text-field
           v-model="form.watchDate"
-          :label="languageStore.t('dateWatched')"
+          :label="languageStore.getLocalizedText('dateWatched')"
           type="date"
           required
           variant="outlined"
@@ -25,7 +25,7 @@
 
         <v-textarea
           v-model="form.reviewDetails"
-          :label="languageStore.t('reviewDetails')"
+          :label="languageStore.getLocalizedText('reviewDetails')"
           rows="3"
           required
           variant="outlined"
@@ -33,7 +33,7 @@
         />
 
         <div class="mb-4">
-          <div class="text-subtitle-1 mb-2">{{ languageStore.t('rating') }}</div>
+          <div class="text-subtitle-1 mb-2">{{ languageStore.getLocalizedText('rating') }}</div>
           <div class="d-flex flex-wrap gap-2">
             <v-btn
               v-for="rating in 10"
@@ -51,7 +51,7 @@
         </div>
 
         <v-btn type="submit" color="primary" class="submit-btn">
-          <span class="white-text">{{ languageStore.t('submitReview') }}</span>
+          <span class="white-text">{{ languageStore.getLocalizedText('submitReview') }}</span>
         </v-btn>
       </v-form>
     </v-card-text>

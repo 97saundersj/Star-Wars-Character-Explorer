@@ -2,7 +2,7 @@
   <v-row class="align-center justify-center my-4">
     <v-col cols="12" sm="auto" class="mb-2 mb-sm-0 d-flex align-center">
       <div class="d-flex align-center justify-center">
-        <span class="me-2 font-weight-medium">{{ languageStore.t('displayLimit') }}:</span>
+        <span class="me-2 font-weight-medium">{{ languageStore.getLocalizedText('displayLimit') }}:</span>
         <v-select
           v-model="store.pageSize"
           :items="[

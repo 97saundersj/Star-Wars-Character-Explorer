@@ -2,7 +2,7 @@
   <div v-if="character">
     <v-btn variant="outlined" color="primary" class="mb-4" :to="{ name: 'star-wars' }">
       <v-icon start icon="mdi-arrow-left" class="me-2"></v-icon>
-      {{ languageStore.t('backToCharacters') }}
+      {{ languageStore.getLocalizedText('backToCharacters') }}
     </v-btn>
 
     <CharacterInfo
@@ -50,9 +50,9 @@ const submitReview = async (review: {
       ...review,
       createdAt: new Date().toISOString(),
     })
-    toast.success('May the Force be review!')
+    toast.success(languageStore.getLocalizedText('successReview'))
   } catch {
-    toast.error('Error creating review.\nI have a bad feeling about this...')
+    toast.error(languageStore.getLocalizedText('errorCreatingReview'))
   }
 }
 </script>
