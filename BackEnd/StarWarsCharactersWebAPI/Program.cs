@@ -1,5 +1,6 @@
 using StarWarsCharactersWebAPI.Services.Interfaces;
 using StarWarsCharactersWebAPI.Services;
+using StarWarsCharactersWebAPI.Models;
 using System.Text.Json.Serialization;
 
 namespace StarWarsCharactersWebAPI;
@@ -25,6 +26,7 @@ public class Program
         builder.Services.AddScoped<ICharacterCacheService, CharacterCacheService>();
         builder.Services.AddScoped<ICharacterService, CharacterService>();
         builder.Services.AddScoped<ICharacterPaginationService, CharacterPaginationService>();
+        builder.Services.AddScoped<ISearchService<Character>, SearchService<Character>>();
 
         // Add CORS services
         builder.Services.AddCors(options =>
